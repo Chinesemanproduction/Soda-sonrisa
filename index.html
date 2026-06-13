@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Soda Sonrisas - Orden en Línea</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #f8f9fc;
+            padding: 16px 16px 120px 16px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 10px 0;
+        }
+        .header h1 {
+            font-size: 26px;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        .header p {
+            color: #7f8c8d;
+            font-size: 13px;
+        }
+
+        .lang-bar {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        .lang-btn {
+            background: white;
+            border: 1px solid #ddd;
+            padding: 6px 14px;
+            border-radius: 25px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+        .lang-btn.active {
+            background: #ff6b35;
+            border-color: #ff6b35;
+            color: white;
+        }
+
+        .phone-section {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border: 1px solid #eef2f7;
+        }
+        .phone-label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: block;
+            color: #2c3e50;
+        }
+        .phone-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            font-size: 16px;
+        }
+        .phone-input:focus {
+            outline: none;
+            border-color: #ff6b35;
+        }
+        .phone-error {
+            color: #e74c3c;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .notes-section {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border: 1px solid #eef2f7;
+        }
+        .notes-label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: block;
+            color: #2c3e50;
+        }
+        .notes-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            font-size: 14px;
+            resize: vertical;
+            font-family: inherit;
+        }
+        .notes-input:focus {
+            outline: none;
+            border-color: #ff6b35;
+        }
+
+        .category {
+            font-size: 18px;
+            font-weight: 700;
+            margin: 20px 0 12px 8px;
+            padding-left: 12px;
+            border-left: 4px solid #ff6b35;
+            color: #2c3e50;
+        }
+
+        .menu-card {
+            background: white;
+            border-radius: 16px;
+            margin-bottom: 12px;
+            padding: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border: 1px solid #eef2f7;
+        }
+        .menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .menu-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: #2c3e50;
+            flex: 1;
+        }
+        .menu-price {
+            font-size: 18px;
+            font-weight: 700;
+            color: #ff6b35;
+        }
+
+        .options-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 12px 0;
+            padding-top: 8px;
+            border-top: 1px dashed #eef2f7;
+        }
+        .option-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f8f9fc;
+            padding: 6px 12px;
+            border-radius: 30px;
+        }
+        .option-label {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+        .option-btn {
+            background: white;
+            border: 1px solid #ddd;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .option-btn.active {
+            background: #ff6b35;
+            border-color: #ff6b35;
+            color: white;
+        }
+
+        .qty-control {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 8px;
+        }
+        .qty-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: #ff6b35;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(255,107,53,0.2);
+        }
+        .qty-btn.minus {
+            background: #e74c3c;
+        }
+        .qty-btn:active {
+            transform: scale(0.92);
+        }
+        .qty-number {
+            font-size: 18px;
+            font-weight: 600;
+            min-width: 32px;
+            text-align: center;
+        }
+
+        .extras-section {
+            margin-top: 15px;
+            padding-top: 12px;
+            border-top: 1px solid #eef2f7;
+        }
+        .extras-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #7f8c8d;
+            margin-bottom: 10px;
+        }
+        .extra-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .extra-btn {
+            background: #f0f4f8;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 30px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .extra-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .extra-btn span:first-child {
+            font-weight: 500;
+        }
+        .extra-btn span:last-child {
+            color: #ff6b35;
+            font-weight: 600;
+        }
+
+        .cart-floating {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 2px solid #ff6b35;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+            padding: 14px 16px;
+            z-index: 100;
+        }
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        .cart-items {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+        }
+        .cart-item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            font-size: 13px;
+            padding: 6px 0;
+            border-bottom: 1px dashed #eef2f7;
+        }
+        .cart-item-name {
+            flex: 2;
+        }
+        .cart-item-price {
+            font-weight: 500;
+            color: #ff6b35;
+        }
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 700;
+            font-size: 18px;
+            padding: 10px 0;
+            border-top: 1px solid #eef2f7;
+        }
+        .btn-generate {
+            width: 100%;
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 40px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 8px;
+        }
+        .btn-generate:active {
+            transform: scale(0.98);
+        }
+        .btn-generate.disabled {
+            background: #bdc3c7;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 24px;
+            padding: 24px;
+            max-width: 90%;
+            width: 360px;
+            text-align: center;
+        }
+        .modal-content h3 {
+            margin-bottom: 16px;
+            color: #2c3e50;
+        }
+        .qr-container {
+            margin: 16px 0;
+            display: flex;
+            justify-content: center;
+        }
+        .order-summary {
+            background: #f8f9fc;
+            border-radius: 12px;
+            padding: 12px;
+            margin: 16px 0;
+            font-size: 12px;
+            text-align: left;
+        }
+        .close-modal {
+            background: #ff6b35;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .empty-cart {
+            text-align: center;
+            color: #95a5a6;
+            padding: 12px;
+            font-size: 13px;
+        }
+        .delete-extra {
+            background: none;
+            border: none;
+            color: #e74c3c;
+            margin-left: 10px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .search-box {
+            margin-bottom: 15px;
+            padding: 0 8px;
+        }
+        .search-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #ddd;
+            border-radius: 30px;
+            font-size: 14px;
+            background: white;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: #ff6b35;
+        }
+        
+        .price-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 300;
+        }
+        .price-modal-content {
+            background: white;
+            border-radius: 24px;
+            padding: 24px;
+            width: 280px;
+            text-align: center;
+        }
+        .price-input {
+            width: 100%;
+            padding: 12px;
+            font-size: 20px;
+            text-align: center;
+            border: 2px solid #ff6b35;
+            border-radius: 12px;
+            margin: 16px 0;
+        }
+        .price-modal-buttons {
+            display: flex;
+            gap: 12px;
+        }
+        .price-modal-buttons button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 30px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .price-confirm {
+            background: #27ae60;
+            color: white;
+        }
+        .price-cancel {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .alert-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 400;
+        }
+        .alert-content {
+            background: white;
+            border-radius: 24px;
+            padding: 24px;
+            width: 300px;
+            text-align: center;
+        }
+        .alert-content p {
+            margin: 16px 0;
+            line-height: 1.5;
+        }
+        .alert-ok {
+            background: #ff6b35;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<div class="lang-bar">
+    <button class="lang-btn" data-lang="en">🇺🇸 EN</button>
+    <button class="lang-btn active" data-lang="es">🇪🇸 ES</button>
+    <button class="lang-btn" data-lang="zh">🇨🇳 中文</button>
+</div>
+
+<div class="header">
+    <h1 id="shop-name">Soda Sonrisas</h1>
+    <p id="shop-desc">📱 Escanea el código para pagar en caja</p>
+</div>
+
+<div class="phone-section">
+    <label class="phone-label" id="phone-label">📞 Teléfono de contacto *</label>
+    <input type="tel" id="phoneInput" class="phone-input" placeholder="88888888" maxlength="8">
+    <div id="phoneError" class="phone-error">El teléfono debe tener 8 dígitos</div>
+</div>
+
+<div class="notes-section">
+    <label class="notes-label" id="notes-label">📝 Observaciones / Notas</label>
+    <textarea id="notesInput" class="notes-input" rows="2" placeholder="Ej: Sin cebolla, sin huevo, etc..."></textarea>
+</div>
+
+<div class="search-box">
+    <input type="text" id="searchInput" class="search-input" placeholder="🔍 Buscar producto...">
+</div>
+
+<div id="menu-container"></div>
+
+<div class="cart-floating" id="cartFloat">
+    <div class="cart-header">
+        <span id="cart-title">🛒 Mi pedido</span>
+        <span id="cart-count">0 items</span>
+    </div>
+    <div id="cart-items-list" class="cart-items">
+        <div class="empty-cart" id="empty-cart-msg">No hay productos seleccionados</div>
+    </div>
+    <div class="cart-total">
+        <span id="total-label">Total</span>
+        <span id="cart-total-amount">₡0</span>
+    </div>
+    <button id="generateQRBtn" class="btn-generate disabled" onclick="generateOrderQR()">
+        📱 Generar QR para pagar
+    </button>
+</div>
+
+<div id="qrModal" style="display: none;" class="modal">
+    <div class="modal-content">
+        <h3 id="modal-title">📱 Muestra este código</h3>
+        <div id="qr-code" class="qr-container"></div>
+        <div class="order-summary" id="qr-order-summary"></div>
+        <button class="close-modal" onclick="closeQRModal()" id="close-btn">Cerrar</button>
+    </div>
+</div>
+
+<div id="priceModal" style="display: none;" class="price-modal">
+    <div class="price-modal-content">
+        <h4 id="priceModalTitle">Ingrese precio</h4>
+        <input type="number" id="priceInput" class="price-input" min="1000" step="100" value="1000">
+        <div class="price-modal-buttons">
+            <button class="price-confirm" onclick="confirmPrice()">Confirmar</button>
+            <button class="price-cancel" onclick="cancelPrice()">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<div id="alertModal" style="display: none;" class="alert-modal">
+    <div class="alert-content">
+        <h3 id="alertTitle">📢 Atención</h3>
+        <p id="alertMessage"></p>
+        <button class="alert-ok" onclick="closeAlert()">OK</button>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs2@0.0.2/qrcode.min.js"></script>
+<script>
+    // ============================================================
+    // 商品数据 - 使用数字ID (1-47)
+    // DE LA CASA 加价 400
+    // ============================================================
+    const PRODUCTS = [
+        { id: 1, name_en: "1. ORDEN DE LECHÓN", name_es: "1. ORDEN DE LECHÓN", name_zh: "1. 烤乳猪饭", basePrice: 4500 },
+        { id: 2, name_en: "2. CAMARONES EMPANIZADOS CON PAPAS", name_es: "2. CAMARONES EMPANIZADOS CON PAPAS", name_zh: "2. 炸虾配薯条", basePrice: 5500 },
+        { id: 3, name_en: "3. FILET EMPANIZADO", name_es: "3. FILET EMPANIZADO", name_zh: "3. 炸鱼排", basePrice: 3700 },
+        { id: 4, name_en: "4. WANTAN FRITO", name_es: "4. WANTAN FRITO", name_zh: "4. 炸云吞", basePrice: 2800 },
+        { id: 5, name_en: "5. CHAUMIN", name_es: "5. CHAUMIN", name_zh: "5. 炒面", basePrice: 4500 },
+        { id: 6, name_en: "6. TACO CHINO", name_es: "6. TACO CHINO", name_zh: "6. 中式卷饼", basePrice: 2900 },
+        { id: 7, name_en: "7. SOPA DE POLLO", name_es: "7. SOPA DE POLLO", name_zh: "7. 鸡汤", basePrice: 2800 },
+        { id: 8, name_en: "8. MEDIO DE ARROZ CON CHORIZO CHINO", name_es: "8. MEDIO DE ARROZ CON CHORIZO CHINO", name_zh: "8. 中式香肠炒饭(半份)", basePrice: 3500 },
+        { id: 9, name_en: "8. ENTERO DE ARROZ CON CHORIZO CHINO", name_es: "8. ENTERO DE ARROZ CON CHORIZO CHINO", name_zh: "8. 中式香肠炒饭(整份)", basePrice: 4000 },
+        { id: 10, name_en: "9. MEDIO DE ARROZ CANTONÉS", name_es: "9. MEDIO DE ARROZ CANTONÉS", name_zh: "9. 广东炒饭(半份)", basePrice: 2500 },
+        { id: 11, name_en: "9. ENTERO DE ARROZ CANTONÉS", name_es: "9. ENTERO DE ARROZ CANTONÉS", name_zh: "9. 广东炒饭(整份)", basePrice: 3100 },
+        { id: 12, name_en: "10. MEDIO DE ARROZ CON POLLO", name_es: "10. MEDIO DE ARROZ CON POLLO", name_zh: "10. 鸡肉炒饭(半份)", basePrice: 2700 },
+        { id: 13, name_en: "10. ENTERO DE ARROZ CON POLLO", name_es: "10. ENTERO DE ARROZ CON POLLO", name_zh: "10. 鸡肉炒饭(整份)", basePrice: 3300 },
+        { id: 14, name_en: "11. MEDIO DE ARROZ CON CAMARONES", name_es: "11. MEDIO DE ARROZ CON CAMARONES", name_zh: "11. 虾仁炒饭(半份)", basePrice: 3600 },
+        { id: 15, name_en: "11. ENTERO DE ARROZ CON CAMARONES", name_es: "11. ENTERO DE ARROZ CON CAMARONES", name_zh: "11. 虾仁炒饭(整份)", basePrice: 4800 },
+        { id: 16, name_en: "12. ARROZ CON TROZOS DE LOMO", name_es: "12. ARROZ CON TROZOS DE LOMO", name_zh: "12. 猪肉丁炒饭", basePrice: 4000 },
+        { id: 17, name_en: "13. MEDIO DE ARROZ CON POLLO Y JAMÓN", name_es: "13. MEDIO DE ARROZ CON POLLO Y JAMÓN", name_zh: "13. 鸡肉火腿炒饭(半份)", basePrice: 2600 },
+        { id: 18, name_en: "13. ENTERO DE ARROZ CON POLLO Y JAMÓN", name_es: "13. ENTERO DE ARROZ CON POLLO Y JAMÓN", name_zh: "13. 鸡肉火腿炒饭(整份)", basePrice: 3300 },
+        { id: 19, name_en: "14. MEDIO DE ARROZ EN SALSA", name_es: "14. MEDIO DE ARROZ EN SALSA", name_zh: "14. 酱汁炒饭(半份)", basePrice: 2600 },
+        { id: 20, name_en: "14. ENTERO DE ARROZ EN SALSA", name_es: "14. ENTERO DE ARROZ EN SALSA", name_zh: "14. 酱汁炒饭(整份)", basePrice: 3300 },
+        { id: 21, name_en: "15. ARROZ EN SALSA CON TROZOS DE LOMO", name_es: "15. ARROZ EN SALSA CON TROZOS DE LOMO", name_zh: "15. 酱汁猪肉丁炒饭", basePrice: 4000 },
+        { id: 22, name_en: "16. ARROZ CON LECHÓN", name_es: "16. ARROZ CON LECHÓN", name_zh: "16. 烤乳猪炒饭", basePrice: 3700 },
+        { id: 23, name_en: "17. MEDIO DE ARROZ EN SALSA CON POLLO", name_es: "17. MEDIO DE ARROZ EN SALSA CON POLLO", name_zh: "17. 酱汁鸡肉炒饭(半份)", basePrice: 2600 },
+        { id: 24, name_en: "17. ENTERO DE ARROZ EN SALSA CON POLLO", name_es: "17. ENTERO DE ARROZ EN SALSA CON POLLO", name_zh: "17. 酱汁鸡肉炒饭(整份)", basePrice: 3400 },
+        { id: 25, name_en: "18. MEDIO DE ARROZ EN SALSA CON CAMARONES", name_es: "18. MEDIO DE ARROZ EN SALSA CON CAMARONES", name_zh: "18. 酱汁虾仁炒饭(半份)", basePrice: 3700 },
+        { id: 26, name_en: "18. ENTERO DE ARROZ EN SALSA CON CAMARONES", name_es: "18. ENTERO DE ARROZ EN SALSA CON CAMARONES", name_zh: "18. 酱汁虾仁炒饭(整份)", basePrice: 5000 },
+        { id: 27, name_en: "19. MEDIO DE CHOP SUEY EN SALSA", name_es: "19. MEDIO DE CHOP SUEY EN SALSA", name_zh: "19. 酱汁杂碎(半份)", basePrice: 2700 },
+        { id: 28, name_en: "19. ENTERO DE CHOP SUEY EN SALSA", name_es: "19. ENTERO DE CHOP SUEY EN SALSA", name_zh: "19. 酱汁杂碎(整份)", basePrice: 3400 },
+        { id: 29, name_en: "20. MEDIO DE CHOP SUEY EN SALSA CON CAMARONES", name_es: "20. MEDIO DE CHOP SUEY EN SALSA CON CAMARONES", name_zh: "20. 酱汁虾仁杂碎(半份)", basePrice: 3700 },
+        { id: 30, name_en: "20. ENTERO DE CHOP SUEY EN SALSA CON CAMARONES", name_es: "20. ENTERO DE CHOP SUEY EN SALSA CON CAMARONES", name_zh: "20. 酱汁虾仁杂碎(整份)", basePrice: 5000 },
+        { id: 31, name_en: "21. MEDIO DE CHOP SUEY EN SALSA CON POLLO", name_es: "21. MEDIO DE CHOP SUEY EN SALSA CON POLLO", name_zh: "21. 酱汁鸡肉杂碎(半份)", basePrice: 2800 },
+        { id: 32, name_en: "21. ENTERO DE CHOP SUEY EN SALSA CON POLLO", name_es: "21. ENTERO DE CHOP SUEY EN SALSA CON POLLO", name_zh: "21. 酱汁鸡肉杂碎(整份)", basePrice: 3400 },
+        { id: 33, name_en: "22. CHOP SUEY EN SALSA CON TROZOS DE LOMO", name_es: "22. CHOP SUEY EN SALSA CON TROZOS DE LOMO", name_zh: "22. 酱汁猪肉杂碎", basePrice: 4000 },
+        { id: 34, name_en: "23. MEDIO DE CHOP SUEY SECO", name_es: "23. MEDIO DE CHOP SUEY SECO", name_zh: "23. 干炒杂碎(半份)", basePrice: 2900 },
+        { id: 35, name_en: "23. ENTERO DE CHOP SUEY SECO", name_es: "23. ENTERO DE CHOP SUEY SECO", name_zh: "23. 干炒杂碎(整份)", basePrice: 3600 },
+        { id: 36, name_en: "24. MEDIO DE CHOP SUEY SECO CON CAMARONES", name_es: "24. MEDIO DE CHOP SUEY SECO CON CAMARONES", name_zh: "24. 干炒虾仁杂碎(半份)", basePrice: 3800 },
+        { id: 37, name_en: "24. ENTERO DE CHOP SUEY SECO CON CAMARONES", name_es: "24. ENTERO DE CHOP SUEY SECO CON CAMARONES", name_zh: "24. 干炒虾仁杂碎(整份)", basePrice: 5000 },
+        { id: 38, name_en: "25. MEDIO DE CHOP SUEY SECO CON POLLO", name_es: "25. MEDIO DE CHOP SUEY SECO CON POLLO", name_zh: "25. 干炒鸡肉杂碎(半份)", basePrice: 2900 },
+        { id: 39, name_en: "25. ENTERO DE CHOP SUEY SECO CON POLLO", name_es: "25. ENTERO DE CHOP SUEY SECO CON POLLO", name_zh: "25. 干炒鸡肉杂碎(整份)", basePrice: 3600 },
+        { id: 40, name_en: "26. ENTERO DE CHOP SUEY SECO CON TROZOS DE LOMO", name_es: "26. ENTERO DE CHOP SUEY SECO CON TROZOS DE LOMO", name_zh: "26. 干炒猪肉杂碎", basePrice: 4000 },
+        { id: 41, name_en: "27. VEGETALES EN SALSA DE OSTIÓN", name_es: "27. VEGETALES EN SALSA DE OSTIÓN", name_zh: "27. 蚝油时蔬", basePrice: 3500 },
+        { id: 42, name_en: "28. VEGETALES EN SALSA CON TROZOS DE LOMO", name_es: "28. VEGETALES EN SALSA CON TROZOS DE LOMO", name_zh: "28. 猪肉时蔬", basePrice: 4700 },
+        { id: 43, name_en: "29. VEGETALES EN SALSA CON POLLO", name_es: "29. VEGETALES EN SALSA CON POLLO", name_zh: "29. 鸡肉时蔬", basePrice: 3900 },
+        { id: 44, name_en: "30. VEGETALES EN SALSA CON CAMARONES", name_es: "30. VEGETALES EN SALSA CON CAMARONES", name_zh: "30. 虾仁时蔬", basePrice: 5500 },
+        { id: 45, name_en: "31. VEGETALES EN SALSA CON CARNES MIXTAS", name_es: "31. VEGETALES EN SALSA CON CARNES MIXTAS", name_zh: "31. 什锦肉时蔬", basePrice: 4200 },
+        { id: 46, name_en: "32. PAPAS A LA FRANCÉSA PEQUEÑAS", name_es: "32. PAPAS A LA FRANCÉSA PEQUEÑAS", name_zh: "32. 炸薯条(小份)", basePrice: 1850 },
+        { id: 47, name_en: "32. PAPAS A LA FRANCÉSA GRANDES", name_es: "32. PAPAS A LA FRANCÉSA GRANDES", name_zh: "32. 炸薯条(大份)", basePrice: 2200 }
+    ];
+
+    // 附加品数据
+    const EXTRAS = [
+        { id: "E1", name_en: "Camarones", name_es: "Camarones", name_zh: "虾仁", defaultPrice: 1000 },
+        { id: "E2", name_en: "Chorizo", name_es: "Chorizo", name_zh: "香肠", defaultPrice: 1000 },
+        { id: "E3", name_en: "Adicional", name_es: "Adicional", name_zh: "额外配料", defaultPrice: 1000 }
+    ];
+
+    const TEXTS = {
+        en: {
+            shopName: "Soda Sonrisas", shopDesc: "📱 Scan QR to pay at counter",
+            cartTitle: "🛒 My Order", totalLabel: "Total",
+            generateBtn: "📱 Generate QR to Pay", modalTitle: "📱 Show this QR to cashier",
+            closeBtn: "Close", emptyCart: "No items selected",
+            itemsCount: (n) => `${n} item${n !== 1 ? 's' : ''}`,
+            conOlor: "Con olor", sinOlor: "Sin olor", deLaCasa: "De la casa (+₡400)", normal: "Normal",
+            priceTitle: "Enter price (min ₡1000)", confirm: "Confirm", cancel: "Cancel",
+            addExtraDisabled: "Please add a main dish first",
+            phoneLabel: "📞 Contact phone *", phonePlaceholder: "8 digits",
+            notesLabel: "📝 Notes / Special requests",
+            alertTitle: "📢 Important Notice",
+            alertMessage: "If you wish to add special ingredients or custom requests, please mention them in the NOTES section below.",
+            phoneError: "Phone number must be 8 digits"
+        },
+        es: {
+            shopName: "Soda Sonrisas", shopDesc: "📱 Escanea el QR para pagar en caja",
+            cartTitle: "🛒 Mi pedido", totalLabel: "Total",
+            generateBtn: "📱 Generar QR para pagar", modalTitle: "📱 Muestra este QR en caja",
+            closeBtn: "Cerrar", emptyCart: "No hay productos seleccionados",
+            itemsCount: (n) => `${n} producto${n !== 1 ? 's' : ''}`,
+            conOlor: "Con olor", sinOlor: "Sin olor", deLaCasa: "De la casa (+₡400)", normal: "Normal",
+            priceTitle: "Ingrese precio (mín ₡1000)", confirm: "Confirmar", cancel: "Cancelar",
+            addExtraDisabled: "Agregue un plato principal primero",
+            phoneLabel: "📞 Teléfono de contacto *", phonePlaceholder: "8 dígitos",
+            notesLabel: "📝 Observaciones / Notas",
+            alertTitle: "📢 Aviso importante",
+            alertMessage: "Si desea agregar ingredientes especiales o solicitudes personalizadas, menciónelas en la sección de NOTAS.",
+            phoneError: "El teléfono debe tener 8 dígitos"
+        },
+        zh: {
+            shopName: "Soda Sonrisas", shopDesc: "📱 扫码到前台付款",
+            cartTitle: "🛒 已选菜品", totalLabel: "总计",
+            generateBtn: "📱 生成付款二维码", modalTitle: "📱 请出示此码到前台",
+            closeBtn: "关闭", emptyCart: "暂未选择菜品",
+            itemsCount: (n) => `${n} 个菜品`,
+            conOlor: "正常口味", sinOlor: "淡口味", deLaCasa: "招牌升级 (+₡400)", normal: "普通",
+            priceTitle: "输入价格 (最低 ₡1000)", confirm: "确认", cancel: "取消",
+            addExtraDisabled: "请先添加主菜",
+            phoneLabel: "📞 联系电话 *", phonePlaceholder: "8位数字",
+            notesLabel: "📝 备注 / 特殊要求",
+            alertTitle: "📢 重要提示",
+            alertMessage: "如需添加特殊配料或定制要求，请在下方备注栏中说明。",
+            phoneError: "电话号码必须为8位数字"
+        }
+    };
+
+    let currentLang = 'es';
+    let cart = [];
+    let searchQuery = '';
+    let pendingExtra = null;
+    let filteredProducts = [...PRODUCTS];
+
+    function getProductName(product, lang) {
+        if (lang === 'en') return product.name_en;
+        if (lang === 'zh') return product.name_zh;
+        return product.name_es;
+    }
+
+    function getExtraName(extra, lang) {
+        if (lang === 'en') return extra.name_en;
+        if (lang === 'zh') return extra.name_zh;
+        return extra.name_es;
+    }
+
+    function getText(key, ...args) {
+        let val = TEXTS[currentLang][key];
+        if (typeof val === 'function') return val(...args);
+        return val;
+    }
+
+    // 获取商品最终价格 (De la casa +400)
+    function getProductFinalPrice(basePrice, customType) {
+        if (customType === 'type1') {
+            return basePrice + 400;
+        }
+        return basePrice;
+    }
+
+    // 属性码: 0=Sin olor(默认), 1=Con olor, 2=De la casa+Sin olor, 3=De la casa+Con olor
+    function getAttrCode(importType, customType) {
+        let code = 0;
+        if (importType === 'local') code += 1;
+        if (customType === 'type1') code += 2;
+        return code;
+    }
+
+    function getAttrFromCode(code) {
+        return {
+            importType: (code & 1) ? 'local' : 'imported',
+            customType: (code & 2) ? 'type1' : ''
+        };
+    }
+
+    function updateSearch() {
+        const searchInput = document.getElementById('searchInput').value.toLowerCase();
+        searchQuery = searchInput;
+        if (!searchQuery) {
+            filteredProducts = [...PRODUCTS];
+        } else {
+            filteredProducts = PRODUCTS.filter(p => 
+                p.name_en.toLowerCase().includes(searchQuery) ||
+                p.name_es.toLowerCase().includes(searchQuery) ||
+                p.name_zh.toLowerCase().includes(searchQuery)
+            );
+        }
+        renderMenu();
+    }
+
+    function validatePhone() {
+        const phone = document.getElementById('phoneInput').value.trim();
+        if (phone && !/^\d{8}$/.test(phone)) {
+            document.getElementById('phoneError').style.display = 'block';
+            return false;
+        }
+        document.getElementById('phoneError').style.display = 'none';
+        return true;
+    }
+
+    function renderMenu() {
+        const container = document.getElementById('menu-container');
+        let html = '';
+        
+        if (filteredProducts.length === 0) {
+            html = '<div style="text-align:center; padding:40px; color:#999;">No se encontraron productos</div>';
+            container.innerHTML = html;
+            return;
+        }
+        
+        for (let product of filteredProducts) {
+            const productName = getProductName(product, currentLang);
+            const cartItem = cart.find(i => i.productId === product.id);
+            const qty = cartItem ? cartItem.qty : 0;
+            const importType = cartItem ? cartItem.importType : 'imported';
+            const customType = cartItem ? cartItem.customType : '';
+            const displayPrice = getProductFinalPrice(product.basePrice, customType);
+            
+            html += `
+                <div class="menu-card" data-product-id="${product.id}">
+                    <div class="menu-header">
+                        <span class="menu-name">${escapeHtml(productName)}</span>
+                        <span class="menu-price">₡${displayPrice.toFixed(2)}</span>
+                    </div>
+                    
+                    <div class="options-row">
+                        <div class="option-group">
+                            <span class="option-label">🧅</span>
+                            <button class="option-btn ${importType === 'local' ? 'active' : ''}" data-type="import" data-value="local" data-product="${product.id}">${getText('conOlor')}</button>
+                            <button class="option-btn ${importType === 'imported' ? 'active' : ''}" data-type="import" data-value="imported" data-product="${product.id}">${getText('sinOlor')}</button>
+                        </div>
+                        <div class="option-group">
+                            <span class="option-label">⭐</span>
+                            <button class="option-btn ${customType === '' ? 'active' : ''}" data-type="custom" data-value="" data-product="${product.id}">${getText('normal')}</button>
+                            <button class="option-btn ${customType === 'type1' ? 'active' : ''}" data-type="custom" data-value="type1" data-product="${product.id}">${getText('deLaCasa')}</button>
+                        </div>
+                    </div>
+                    
+                    <div class="qty-control">
+                        <button class="qty-btn minus" data-action="decr" data-product-id="${product.id}">−</button>
+                        <span class="qty-number" id="qty-${product.id}">${qty}</span>
+                        <button class="qty-btn" data-action="incr" data-product-id="${product.id}">+</button>
+                    </div>
+                    
+                    <div class="extras-section">
+                        <div class="extras-title">➕ ${currentLang === 'en' ? 'Add-ons' : currentLang === 'zh' ? '加料' : 'Extras'}</div>
+                        <div class="extra-buttons">
+                            ${EXTRAS.map(extra => {
+                                const hasQty = qty > 0;
+                                return `
+                                    <button class="extra-btn ${!hasQty ? 'disabled' : ''}" 
+                                        data-extra-id="${extra.id}" 
+                                        data-extra-name="${getExtraName(extra, currentLang)}"
+                                        data-product-id="${product.id}"
+                                        ${!hasQty ? 'disabled' : ''}>
+                                        <span>${getExtraName(extra, currentLang)}</span>
+                                        <span>₡${extra.defaultPrice}</span>
+                                    </button>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        container.innerHTML = html;
+        attachMenuEvents();
+    }
+    
+    function attachMenuEvents() {
+        document.querySelectorAll('.qty-btn').forEach(btn => {
+            btn.onclick = (e) => {
+                e.stopPropagation();
+                const action = btn.dataset.action;
+                const productId = parseInt(btn.dataset.productId);
+                const product = PRODUCTS.find(p => p.id === productId);
+                if (!product) return;
+                
+                const cartIndex = cart.findIndex(i => i.productId === productId);
+                
+                if (action === 'incr') {
+                    if (cartIndex === -1) {
+                        cart.push({
+                            productId: product.id,
+                            name: getProductName(product, currentLang),
+                            basePrice: product.basePrice,
+                            qty: 1,
+                            importType: 'imported',
+                            customType: '',
+                            extras: []
+                        });
+                    } else {
+                        cart[cartIndex].qty++;
+                    }
+                } else if (action === 'decr') {
+                    if (cartIndex !== -1) {
+                        if (cart[cartIndex].qty <= 1) {
+                            cart.splice(cartIndex, 1);
+                        } else {
+                            cart[cartIndex].qty--;
+                        }
+                    }
+                }
+                updateAll();
+            };
+        });
+        
+        document.querySelectorAll('.option-btn').forEach(btn => {
+            btn.onclick = (e) => {
+                e.stopPropagation();
+                const type = btn.dataset.type;
+                const value = btn.dataset.value;
+                const productId = parseInt(btn.dataset.product);
+                let cartIndex = cart.findIndex(i => i.productId === productId);
+                
+                if (cartIndex === -1) {
+                    const product = PRODUCTS.find(p => p.id === productId);
+                    if (product) {
+                        cart.push({
+                            productId: product.id,
+                            name: getProductName(product, currentLang),
+                            basePrice: product.basePrice,
+                            qty: 0,
+                            importType: type === 'import' ? value : 'imported',
+                            customType: type === 'custom' ? value : '',
+                            extras: []
+                        });
+                        cartIndex = cart.length - 1;
+                    }
+                }
+                
+                if (cartIndex !== -1) {
+                    if (type === 'import') cart[cartIndex].importType = value;
+                    if (type === 'custom') cart[cartIndex].customType = value;
+                }
+                updateAll();
+            };
+        });
+        
+        document.querySelectorAll('.extra-btn').forEach(btn => {
+            btn.onclick = (e) => {
+                e.stopPropagation();
+                if (btn.disabled) return;
+                
+                const extraId = btn.dataset.extraId;
+                const extraName = btn.dataset.extraName;
+                const productId = parseInt(btn.dataset.productId);
+                
+                const cartItem = cart.find(i => i.productId === productId);
+                if (!cartItem || cartItem.qty === 0) {
+                    alert(getText('addExtraDisabled'));
+                    return;
+                }
+                
+                pendingExtra = { productId, extraId, extraName };
+                document.getElementById('priceModalTitle').innerText = getText('priceTitle');
+                document.getElementById('priceInput').value = 1000;
+                document.getElementById('priceModal').style.display = 'flex';
+            };
+        });
+    }
+    
+    function confirmPrice() {
+        let price = parseInt(document.getElementById('priceInput').value);
+        if (isNaN(price) || price < 1000) {
+            price = 1000;
+        }
+        
+        if (pendingExtra) {
+            const { productId, extraId, extraName } = pendingExtra;
+            const cartIndex = cart.findIndex(i => i.productId === productId);
+            
+            if (cartIndex !== -1) {
+                cart[cartIndex].extras.push({
+                    id: extraId,
+                    name: extraName,
+                    price: price
+                });
+            }
+        }
+        
+        document.getElementById('priceModal').style.display = 'none';
+        pendingExtra = null;
+        updateAll();
+    }
+    
+    function cancelPrice() {
+        document.getElementById('priceModal').style.display = 'none';
+        pendingExtra = null;
+    }
+    
+    window.removeExtraFromCart = function(itemIndex, extraIndex) {
+        if (cart[itemIndex] && cart[itemIndex].extras) {
+            cart[itemIndex].extras.splice(extraIndex, 1);
+            updateAll();
+        }
+    };
+    
+    function updateAll() {
+        renderMenu();
+        renderCart();
+        updateCartBadge();
+        updateGenerateButton();
+    }
+    
+    function renderCart() {
+        const container = document.getElementById('cart-items-list');
+        let total = 0;
+        let itemsHtml = '';
+        
+        const validItems = cart.filter(i => i.qty > 0 || i.extras.length > 0);
+        
+        if (validItems.length === 0) {
+            container.innerHTML = `<div class="empty-cart">${getText('emptyCart')}</div>`;
+            document.getElementById('cart-total-amount').innerHTML = '₡0';
+            return;
+        }
+        
+        for (let idx = 0; idx < cart.length; idx++) {
+            const item = cart[idx];
+            if (item.qty === 0 && item.extras.length === 0) continue;
+            
+            const finalPrice = getProductFinalPrice(item.basePrice, item.customType);
+            const itemTotal = finalPrice * item.qty;
+            total += itemTotal;
+            
+            let attrText = '';
+            if (item.importType === 'local') attrText += ' (Con olor)';
+            if (item.customType === 'type1') attrText += ' (De la casa)';
+            
+            itemsHtml += `
+                <div class="cart-item-row">
+                    <div class="cart-item-name">
+                        ${escapeHtml(item.name)}${escapeHtml(attrText)} ×${item.qty}
+                    </div>
+                    <div class="cart-item-price">₡${itemTotal.toFixed(2)}</div>
+                </div>
+            `;
+            
+            for (let eIdx = 0; eIdx < item.extras.length; eIdx++) {
+                const extra = item.extras[eIdx];
+                total += extra.price;
+                itemsHtml += `
+                    <div class="cart-item-row" style="padding-left: 20px;">
+                        <div class="cart-item-name">
+                            ↳ ${escapeHtml(extra.name)}
+                        </div>
+                        <div>
+                            <span class="cart-item-price">₡${extra.price.toFixed(2)}</span>
+                            <button class="delete-extra" onclick="removeExtraFromCart(${idx}, ${eIdx})">✕</button>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+        
+        container.innerHTML = itemsHtml;
+        document.getElementById('cart-total-amount').innerHTML = `₡${total.toFixed(2)}`;
+    }
+    
+    function updateCartBadge() {
+        const totalQty = cart.reduce((sum, i) => sum + i.qty, 0);
+        document.getElementById('cart-count').innerHTML = getText('itemsCount', totalQty);
+    }
+    
+    function updateGenerateButton() {
+        const btn = document.getElementById('generateQRBtn');
+        const hasItems = cart.some(i => i.qty > 0 || i.extras.length > 0);
+        if (hasItems) {
+            btn.classList.remove('disabled');
+        } else {
+            btn.classList.add('disabled');
+        }
+    }
+    
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+    
+    function generateSimpleQRContent() {
+        const validItems = cart.filter(i => i.qty > 0 || i.extras.length > 0);
+        if (validItems.length === 0) return '';
+        
+        const parts = [];
+        for (let item of validItems) {
+            const attrCode = getAttrCode(item.importType, item.customType);
+            let itemStr = `${item.productId}|${item.qty}|${attrCode}`;
+            
+            if (item.extras && item.extras.length > 0) {
+                const extrasStr = item.extras.map(e => `${e.id}|${e.price}`).join('!');
+                itemStr += `|${extrasStr}`;
+            }
+            parts.push(itemStr);
+        }
+        
+        return parts.join(';');
+    }
+    
+    window.generateOrderQR = function() {
+        if (!validatePhone()) {
+            document.getElementById('phoneError').style.display = 'block';
+            document.getElementById('phoneInput').focus();
+            return;
+        }
+        
+        const validItems = cart.filter(i => i.qty > 0 || i.extras.length > 0);
+        if (validItems.length === 0) {
+            alert(getText('emptyCart'));
+            return;
+        }
+        
+        let total = 0;
+        for (let item of validItems) {
+            const finalPrice = getProductFinalPrice(item.basePrice, item.customType);
+            total += finalPrice * item.qty;
+            if (item.extras) total += item.extras.reduce((s, e) => s + e.price, 0);
+        }
+        
+        const phone = document.getElementById('phoneInput').value.trim();
+        const notes = document.getElementById('notesInput').value.trim();
+        
+        const qrContent = generateSimpleQRContent();
+        const fullQRContent = phone ? `${qrContent}|${phone}` : qrContent;
+        const finalQR = notes ? `${fullQRContent}|${notes.replace(/\|/g, ' ')}` : fullQRContent;
+        
+        console.log("QR Content:", finalQR);
+        
+        const modal = document.getElementById('qrModal');
+        const qrDiv = document.getElementById('qr-code');
+        qrDiv.innerHTML = '';
+        
+        try {
+            new QRCode(qrDiv, {
+                text: finalQR,
+                width: 220,
+                height: 220
+            });
+        } catch(e) {
+            console.error("QR生成错误:", e);
+            qrDiv.innerHTML = '<div style="color:red;">QR生成失败</div>';
+        }
+        
+        const itemCount = validItems.reduce((s, i) => s + i.qty, 0);
+        const summaryHtml = `
+            <div><strong>${itemCount} producto(s)</strong></div>
+            <div>Total: ₡${total.toFixed(2)}</div>
+            ${phone ? `<div>📞 Tel: ${phone}</div>` : ''}
+            ${notes ? `<div>📝 Notas: ${escapeHtml(notes.substring(0, 50))}${notes.length > 50 ? '...' : ''}</div>` : ''}
+            <div style="font-size: 10px; margin-top: 8px; word-break: break-all; color:#888;">${finalQR.substring(0, 100)}${finalQR.length > 100 ? '...' : ''}</div>
+        `;
+        document.getElementById('qr-order-summary').innerHTML = summaryHtml;
+        document.getElementById('modal-title').innerHTML = getText('modalTitle');
+        document.getElementById('close-btn').innerHTML = getText('closeBtn');
+        modal.style.display = 'flex';
+    };
+    
+    window.closeQRModal = function() {
+        document.getElementById('qrModal').style.display = 'none';
+    };
+    
+    function showAlert() {
+        document.getElementById('alertTitle').innerText = getText('alertTitle');
+        document.getElementById('alertMessage').innerText = getText('alertMessage');
+        document.getElementById('alertModal').style.display = 'flex';
+    }
+    
+    window.closeAlert = function() {
+        document.getElementById('alertModal').style.display = 'none';
+    };
+    
+    function setLanguage(lang) {
+        currentLang = lang;
+        document.getElementById('shop-name').innerHTML = TEXTS[lang].shopName;
+        document.getElementById('shop-desc').innerHTML = TEXTS[lang].shopDesc;
+        document.getElementById('cart-title').innerHTML = TEXTS[lang].cartTitle;
+        document.getElementById('total-label').innerHTML = TEXTS[lang].totalLabel;
+        document.getElementById('generateQRBtn').innerHTML = TEXTS[lang].generateBtn;
+        document.getElementById('phone-label').innerHTML = getText('phoneLabel');
+        document.getElementById('phoneInput').placeholder = getText('phonePlaceholder');
+        document.getElementById('notes-label').innerHTML = getText('notesLabel');
+        
+        for (let item of cart) {
+            const product = PRODUCTS.find(p => p.id === item.productId);
+            if (product) item.name = getProductName(product, currentLang);
+            for (let extra of item.extras) {
+                const extraDef = EXTRAS.find(e => e.id === extra.id);
+                if (extraDef) extra.name = getExtraName(extraDef, currentLang);
+            }
+        }
+        updateAll();
+    }
+    
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const lang = btn.dataset.lang;
+            setLanguage(lang);
+            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            showAlert();
+        });
+    });
+    
+    document.getElementById('searchInput').addEventListener('input', updateSearch);
+    document.getElementById('phoneInput').addEventListener('input', validatePhone);
+    
+    setLanguage('es');
+    showAlert();
+</script>
+</body>
+</html>
