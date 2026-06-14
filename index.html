@@ -1,4 +1,4 @@
-以下是您所需的餐厅在线点餐系统的完整HTML代码。它修复了购物车遮挡商品的问题，并优化了界面视觉效果。
+以下是优化后的餐厅点餐系统代码，解决了底部商品被遮挡的问题，并提升了整体视觉体验。
 ```html
 <!DOCTYPE html>
 <html lang="es">
@@ -17,13 +17,14 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background: linear-gradient(135deg, #f5f7fa 0%, #f0f2f5 100%);
-            padding: 16px 16px 0 16px;
             min-height: 100vh;
         }
 
-        /* 主内容区域 - 为底部浮动购物车留出足够空间 */
-        .main-content-wrapper {
-            padding-bottom: 140px;
+        /* 主容器 - 为底部固定栏预留空间 */
+        .main-wrapper {
+            padding: 16px 16px 140px 16px;
+            max-width: 600px;
+            margin: 0 auto;
         }
 
         .header {
@@ -33,12 +34,11 @@
         }
         .header h1 {
             font-size: 28px;
-            background: linear-gradient(135deg, #2c3e50 0%, #e67e22 100%);
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
             margin-bottom: 5px;
-            letter-spacing: -0.5px;
         }
         .header p {
             color: #7f8c8d;
@@ -58,13 +58,13 @@
             border-radius: 30px;
             font-size: 13px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.25s ease;
             font-weight: 500;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            color: #5a6e7c;
         }
         .lang-btn.active {
-            background: #ff6b35;
-            border-color: #ff6b35;
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            border-color: transparent;
             color: white;
             box-shadow: 0 2px 8px rgba(255,107,53,0.3);
         }
@@ -87,12 +87,12 @@
         }
         .phone-input, .notes-input {
             width: 100%;
-            padding: 12px 16px;
+            padding: 12px 14px;
             border: 1.5px solid #eef2f7;
             border-radius: 14px;
             font-size: 16px;
             transition: all 0.2s;
-            background: #fafbfc;
+            background: #fafcfd;
         }
         .phone-input:focus, .notes-input:focus {
             outline: none;
@@ -103,7 +103,7 @@
         .phone-error {
             color: #e74c3c;
             font-size: 12px;
-            margin-top: 5px;
+            margin-top: 6px;
             display: none;
         }
 
@@ -112,27 +112,28 @@
         }
         .search-input {
             width: 100%;
-            padding: 14px 18px;
+            padding: 12px 18px;
             border: 1.5px solid #eef2f7;
             border-radius: 40px;
             font-size: 15px;
             background: white;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
             transition: all 0.2s;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
         }
         .search-input:focus {
             outline: none;
             border-color: #ff6b35;
-            box-shadow: 0 4px 12px rgba(255,107,53,0.1);
+            box-shadow: 0 0 0 3px rgba(255,107,53,0.1);
         }
 
         .category {
             font-size: 20px;
             font-weight: 800;
-            margin: 24px 0 14px 8px;
+            margin: 24px 0 14px 0;
             padding-left: 14px;
             border-left: 5px solid #ff6b35;
             color: #2c3e50;
+            letter-spacing: -0.3px;
         }
 
         .menu-card {
@@ -140,9 +141,9 @@
             border-radius: 20px;
             margin-bottom: 14px;
             padding: 16px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             border: 1px solid rgba(0,0,0,0.03);
-            transition: transform 0.15s, box-shadow 0.2s;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
         .menu-card:active {
             transform: scale(0.99);
@@ -158,7 +159,7 @@
         .menu-name {
             font-size: 16px;
             font-weight: 700;
-            color: #1e293b;
+            color: #1a2c3e;
             flex: 1;
             line-height: 1.3;
         }
@@ -166,16 +167,16 @@
             font-size: 20px;
             font-weight: 800;
             color: #ff6b35;
-            background: rgba(255,107,53,0.1);
-            padding: 4px 12px;
-            border-radius: 40px;
+            background: #fff4ef;
+            padding: 2px 12px;
+            border-radius: 30px;
         }
 
         .options-row {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
-            margin: 12px 0;
+            gap: 12px;
+            margin: 14px 0 12px;
             padding-top: 8px;
             border-top: 1px solid #f0f2f5;
         }
@@ -184,12 +185,12 @@
             align-items: center;
             gap: 8px;
             background: #f8fafc;
-            padding: 6px 12px;
+            padding: 5px 10px;
             border-radius: 40px;
         }
         .option-label {
-            font-size: 13px;
-            color: #64748b;
+            font-size: 12px;
+            color: #7f8c8d;
             font-weight: 500;
         }
         .option-btn {
@@ -201,10 +202,11 @@
             cursor: pointer;
             transition: all 0.2s;
             font-weight: 500;
+            color: #4a5b6e;
         }
         .option-btn.active {
-            background: #ff6b35;
-            border-color: #ff6b35;
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            border-color: transparent;
             color: white;
             box-shadow: 0 2px 6px rgba(255,107,53,0.3);
         }
@@ -213,27 +215,24 @@
             display: flex;
             align-items: center;
             justify-content: flex-end;
-            gap: 16px;
+            gap: 15px;
             margin-top: 12px;
         }
         .qty-btn {
-            width: 40px;
-            height: 40px;
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
             border: none;
-            background: #ff6b35;
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
             color: white;
-            font-size: 22px;
+            font-size: 20px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.2s;
             box-shadow: 0 2px 6px rgba(255,107,53,0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
         .qty-btn.minus {
-            background: #e74c3c;
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
             box-shadow: 0 2px 6px rgba(231,76,60,0.3);
         }
         .qty-btn:active {
@@ -244,7 +243,7 @@
             font-weight: 700;
             min-width: 36px;
             text-align: center;
-            color: #1e293b;
+            color: #2c3e50;
         }
 
         .extras-section {
@@ -253,11 +252,11 @@
             border-top: 1px solid #f0f2f5;
         }
         .extras-title {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
-            color: #64748b;
-            margin-bottom: 12px;
-            letter-spacing: -0.2px;
+            color: #7f8c8d;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
         }
         .extra-buttons {
             display: flex;
@@ -265,8 +264,8 @@
             gap: 10px;
         }
         .extra-btn {
-            background: linear-gradient(135deg, #fef9f5 0%, #fff5ef 100%);
-            border: 1px solid #ffe0d0;
+            background: linear-gradient(135deg, #f8fafc, #ffffff);
+            border: 1px solid #e2e8f0;
             padding: 8px 16px;
             border-radius: 40px;
             font-size: 13px;
@@ -277,24 +276,24 @@
             gap: 8px;
             font-weight: 500;
         }
+        .extra-btn:not(.disabled):active {
+            transform: scale(0.96);
+        }
         .extra-btn.disabled {
             opacity: 0.5;
             cursor: not-allowed;
             filter: grayscale(0.1);
         }
-        .extra-btn:not(.disabled):active {
-            transform: scale(0.96);
-            background: #ffede3;
-        }
         .extra-btn span:first-child {
-            font-weight: 600;
+            font-weight: 500;
+            color: #2c3e50;
         }
         .extra-btn span:last-child {
             color: #ff6b35;
             font-weight: 700;
         }
 
-        /* 浮动购物车 - 美化 + 防止遮挡 */
+        /* 底部购物车 - 更现代的设计 */
         .cart-floating {
             position: fixed;
             bottom: 0;
@@ -302,18 +301,17 @@
             right: 0;
             background: rgba(255,255,255,0.98);
             backdrop-filter: blur(10px);
-            border-top: 2px solid #ff6b35;
-            box-shadow: 0 -8px 25px rgba(0,0,0,0.12);
-            padding: 16px 20px 20px 20px;
-            z-index: 1000;
-            border-radius: 24px 24px 0 0;
+            border-top: 2px solid rgba(255,107,53,0.3);
+            box-shadow: 0 -8px 30px rgba(0,0,0,0.12);
+            padding: 14px 20px;
+            z-index: 100;
             transition: all 0.3s;
         }
         .cart-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             font-weight: 700;
             color: #2c3e50;
             font-size: 16px;
@@ -322,18 +320,7 @@
             max-height: 220px;
             overflow-y: auto;
             margin-bottom: 12px;
-            scrollbar-width: thin;
-        }
-        .cart-items::-webkit-scrollbar {
-            width: 4px;
-        }
-        .cart-items::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
-        }
-        .cart-items::-webkit-scrollbar-thumb {
-            background: #ff6b35;
-            border-radius: 10px;
+            border-radius: 16px;
         }
         .cart-item-row {
             display: flex;
@@ -341,12 +328,12 @@
             align-items: flex-start;
             font-size: 13px;
             padding: 8px 0;
-            border-bottom: 1px dashed #f0f2f5;
+            border-bottom: 1px dashed #eef2f7;
         }
         .cart-item-name {
             flex: 2;
             font-weight: 500;
-            color: #334155;
+            color: #2c3e50;
         }
         .cart-item-price {
             font-weight: 600;
@@ -356,23 +343,23 @@
             display: flex;
             justify-content: space-between;
             font-weight: 800;
-            font-size: 20px;
+            font-size: 18px;
             padding: 12px 0;
-            border-top: 2px solid #ffedd5;
-            color: #1e293b;
+            border-top: 1.5px solid #eef2f7;
+            margin-top: 4px;
         }
         .btn-generate {
             width: 100%;
-            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
             color: white;
             border: none;
-            padding: 15px;
+            padding: 14px;
             border-radius: 50px;
             font-size: 16px;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
-            margin-top: 8px;
+            margin-top: 6px;
             box-shadow: 0 4px 12px rgba(39,174,96,0.3);
         }
         .btn-generate:active {
@@ -385,19 +372,19 @@
             opacity: 0.6;
         }
 
-        /* 模态框样式优化 */
+        /* Modal 美化 */
         .modal, .price-modal, .alert-modal {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(5px);
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(4px);
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 2000;
+            z-index: 200;
         }
         .modal-content, .price-modal-content, .alert-content {
             background: white;
@@ -406,12 +393,7 @@
             max-width: 90%;
             width: 360px;
             text-align: center;
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
-        }
-        .modal-content h3 {
-            margin-bottom: 20px;
-            color: #2c3e50;
-            font-size: 22px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
         }
         .qr-container {
             margin: 20px 0;
@@ -426,23 +408,17 @@
             font-size: 13px;
             text-align: left;
         }
-        .close-modal {
-            background: #ff6b35;
+        .close-modal, .alert-ok {
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
             color: white;
             border: none;
-            padding: 14px 28px;
+            padding: 12px 28px;
             border-radius: 50px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
             margin-top: 10px;
             width: 100%;
-        }
-        .empty-cart {
-            text-align: center;
-            color: #94a3b8;
-            padding: 16px;
-            font-size: 13px;
         }
         .delete-extra {
             background: none;
@@ -453,29 +429,35 @@
             cursor: pointer;
             font-weight: bold;
         }
-        .price-modal-content input {
-            border-radius: 50px;
+        .price-input {
+            width: 100%;
+            padding: 14px;
+            font-size: 20px;
+            text-align: center;
+            border: 2px solid #ff6b35;
+            border-radius: 20px;
+            margin: 16px 0;
+            font-weight: 600;
         }
-        .price-modal-buttons button {
-            border-radius: 50px;
+        .price-modal-buttons {
+            display: flex;
+            gap: 12px;
         }
-        .alert-ok {
-            border-radius: 50px;
-        }
-        .refresh-hint {
-            position: fixed;
-            bottom: 90px;
-            right: 16px;
-            background: rgba(0,0,0,0.65);
-            backdrop-filter: blur(8px);
+        .price-confirm {
+            background: #27ae60;
             color: white;
-            padding: 6px 12px;
+            padding: 12px;
             border-radius: 40px;
-            font-size: 11px;
-            z-index: 1001;
-            cursor: pointer;
-            font-weight: 500;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            border: none;
+            font-weight: 600;
+        }
+        .price-cancel {
+            background: #e74c3c;
+            color: white;
+            padding: 12px;
+            border-radius: 40px;
+            border: none;
+            font-weight: 600;
         }
         .loading-overlay {
             position: fixed;
@@ -487,13 +469,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 3000;
+            z-index: 500;
             flex-direction: column;
             gap: 16px;
         }
         .spinner {
-            width: 44px;
-            height: 44px;
+            width: 48px;
+            height: 48px;
             border: 4px solid #f0f2f5;
             border-top-color: #ff6b35;
             border-radius: 50%;
@@ -502,68 +484,91 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
-        .cart-badge {
-            background: #ff6b35;
+        .refresh-hint {
+            position: fixed;
+            top: 12px;
+            right: 12px;
+            background: rgba(0,0,0,0.55);
+            backdrop-filter: blur(5px);
             color: white;
-            border-radius: 30px;
-            padding: 2px 10px;
+            padding: 5px 12px;
+            border-radius: 40px;
+            font-size: 11px;
+            z-index: 60;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        /* 自定义滚动条 */
+        .cart-items::-webkit-scrollbar {
+            width: 4px;
+        }
+        .cart-items::-webkit-scrollbar-track {
+            background: #f0f2f5;
+            border-radius: 4px;
+        }
+        .cart-items::-webkit-scrollbar-thumb {
+            background: #ff6b35;
+            border-radius: 4px;
+        }
+        .empty-cart {
+            text-align: center;
+            color: #95a5a6;
+            padding: 16px;
             font-size: 13px;
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs2@0.0.2/qrcode.min.js"></script>
 </head>
 <body>
-
 <div class="refresh-hint" onclick="refreshMenu()">🔄 Actualizar</div>
 
 <div id="loadingOverlay" class="loading-overlay">
     <div class="spinner"></div>
-    <div style="color:#ff6b35; font-weight:500;">Cargando deliciosas opciones...</div>
+    <div style="color:#ff6b35; font-weight:500;">Cargando delicioso menú...</div>
 </div>
 
 <div id="mainContent" style="display: none;">
-    <div class="lang-bar">
-        <button class="lang-btn" data-lang="en">🇺🇸 EN</button>
-        <button class="lang-btn active" data-lang="es">🇪🇸 ES</button>
-        <button class="lang-btn" data-lang="zh">🇨🇳 中文</button>
-    </div>
+    <div class="main-wrapper">
+        <div class="lang-bar">
+            <button class="lang-btn" data-lang="en">🇺🇸 EN</button>
+            <button class="lang-btn active" data-lang="es">🇪🇸 ES</button>
+            <button class="lang-btn" data-lang="zh">🇨🇳 中文</button>
+        </div>
 
-    <div class="header">
-        <h1 id="shop-name">Soda Sonrisas</h1>
-        <p id="shop-desc">✨ Sabores que alegran tu día | Escanea QR y paga fácil</p>
-    </div>
+        <div class="header">
+            <h1 id="shop-name">Soda Sonrisas</h1>
+            <p id="shop-desc">✨ Escanea y paga fácilmente</p>
+        </div>
 
-    <div class="phone-section">
-        <label class="phone-label" id="phone-label">📞 Teléfono de contacto *</label>
-        <input type="tel" id="phoneInput" class="phone-input" placeholder="88888888" maxlength="8">
-        <div id="phoneError" class="phone-error">El teléfono debe tener 8 dígitos</div>
-    </div>
+        <div class="phone-section">
+            <label class="phone-label" id="phone-label">📞 Teléfono de contacto *</label>
+            <input type="tel" id="phoneInput" class="phone-input" placeholder="88888888" maxlength="8">
+            <div id="phoneError" class="phone-error">El teléfono debe tener 8 dígitos</div>
+        </div>
 
-    <div class="notes-section">
-        <label class="notes-label" id="notes-label">📝 Notas especiales</label>
-        <textarea id="notesInput" class="notes-input" rows="2" placeholder="Ej: Sin cebolla, picante extra, sin sal..."></textarea>
-    </div>
+        <div class="notes-section">
+            <label class="notes-label" id="notes-label">📝 Notas / Instrucciones</label>
+            <textarea id="notesInput" class="notes-input" rows="2" placeholder="Ej: Sin cebolla, picante moderado..."></textarea>
+        </div>
 
-    <div class="search-box">
-        <input type="text" id="searchInput" class="search-input" placeholder="🔍 Buscar por nombre...">
-    </div>
+        <div class="search-box">
+            <input type="text" id="searchInput" class="search-input" placeholder="🔍 Buscar plato...">
+        </div>
 
-    <!-- 包裹菜单内容，底部留白避免遮挡 -->
-    <div class="main-content-wrapper" id="menuWrapper">
         <div id="menu-container"></div>
     </div>
 
     <div class="cart-floating">
         <div class="cart-header">
-            <span id="cart-title">🛒 Mi Orden</span>
-            <span id="cart-count" class="cart-badge">0 items</span>
+            <span id="cart-title">🛒 Mi orden</span>
+            <span id="cart-count" style="background:#ff6b3510; padding:4px 12px; border-radius:30px;">0 items</span>
         </div>
         <div id="cart-items-list" class="cart-items">
-            <div class="empty-cart">✨ Aún no has agregado nada</div>
+            <div class="empty-cart">No hay productos seleccionados</div>
         </div>
         <div class="cart-total">
             <span id="total-label">Total</span>
-            <span id="cart-total-amount">₡0</span>
+            <span id="cart-total-amount" style="color:#ff6b35;">₡0</span>
         </div>
         <button id="generateQRBtn" class="btn-generate disabled" onclick="generateOrderQR()">
             📱 Generar QR para pagar
@@ -573,18 +578,18 @@
 
 <div id="qrModal" style="display: none;" class="modal">
     <div class="modal-content">
-        <h3 id="modal-title">📱 Tu código de pago</h3>
+        <h3 id="modal-title" style="color:#2c3e50;">📱 Muestra este QR</h3>
         <div id="qr-code" class="qr-container"></div>
         <div class="order-summary" id="qr-order-summary"></div>
-        <button class="close-modal" onclick="closeQRModal()" id="close-btn">Listo</button>
+        <button class="close-modal" onclick="closeQRModal()" id="close-btn">Cerrar</button>
     </div>
 </div>
 
 <div id="priceModal" style="display: none;" class="price-modal">
     <div class="price-modal-content">
-        <h4 id="priceModalTitle">💰 Ingresa precio del extra</h4>
+        <h4 id="priceModalTitle" style="color:#2c3e50;">💰 Ingrese precio</h4>
         <input type="number" id="priceInput" class="price-input" min="1000" step="100" value="1000">
-        <div class="price-modal-buttons" style="display:flex; gap:12px; margin-top:12px;">
+        <div class="price-modal-buttons">
             <button class="price-confirm" onclick="confirmPrice()">Confirmar</button>
             <button class="price-cancel" onclick="cancelPrice()">Cancelar</button>
         </div>
@@ -593,244 +598,246 @@
 
 <div id="alertModal" style="display: none;" class="alert-modal">
     <div class="alert-content">
-        <h3 id="alertTitle">📢 Aviso</h3>
-        <p id="alertMessage"></p>
+        <h3 id="alertTitle" style="color:#2c3e50;">📢 Aviso</h3>
+        <p id="alertMessage" style="margin:12px 0;"></p>
         <button class="alert-ok" onclick="closeAlert()">Entendido</button>
     </div>
 </div>
 
 <script>
-    // ============================================================
-    // CONFIGURACIÓN Y DEFINICIONES
-    // ============================================================
     const SUPABASE_URL = 'https://lqgwqqbtzjxplcvdxuqs.supabase.co';
     const BUCKET_NAME = 'menu';
     const FILE_PATH = 'menu.json';
     const SIMPLE_PRODUCT_CODES = new Set([1, 2, 3, 4, 6, 7, 46, 47]);
     
-    let PRODUCTS = [];
-    let EXTRAS = [];
-    let cart = [];
-    let currentLang = 'es';
-    let pendingExtra = null;
-    let filteredProducts = [];
-
-    const TEXTS = {
-        en: { shopName:"Soda Sonrisas", shopDesc:"✨ Flavors that brighten your day | Scan QR to pay", cartTitle:"🛒 My Order", totalLabel:"Total", generateBtn:"📱 Generate QR to Pay", modalTitle:"📱 Show this QR to cashier", closeBtn:"Done", emptyCart:"✨ No items added yet", itemsCount:(n)=>`${n} item${n!==1?'s':''}`, conOlor:"Con olor", sinOlor:"Sin olor", deLaCasa:"De la casa (+₡400)", normal:"Normal", priceTitle:"💰 Enter extra price (min ₡1000)", confirm:"Confirm", cancel:"Cancel", addExtraDisabled:"Please add a main dish first", phoneLabel:"📞 Contact phone *", phonePlaceholder:"8 digits", notesLabel:"📝 Special notes", alertTitle:"📢 Important", alertMessage:"For special ingredients, add them in NOTES.", phoneError:"Phone must be 8 digits" },
-        es: { shopName:"Soda Sonrisas", shopDesc:"✨ Sabores que alegran tu día | Escanea QR", cartTitle:"🛒 Mi Pedido", totalLabel:"Total", generateBtn:"📱 Generar QR para pagar", modalTitle:"📱 Muestra este QR en caja", closeBtn:"Listo", emptyCart:"✨ Aún no has agregado nada", itemsCount:(n)=>`${n} producto${n!==1?'s':''}`, conOlor:"Con olor", sinOlor:"Sin olor", deLaCasa:"De la casa (+₡400)", normal:"Normal", priceTitle:"💰 Precio del extra (mín ₡1000)", confirm:"Confirmar", cancel:"Cancelar", addExtraDisabled:"Agrega un plato principal primero", phoneLabel:"📞 Teléfono de contacto *", phonePlaceholder:"8 dígitos", notesLabel:"📝 Notas especiales", alertTitle:"📢 Aviso importante", alertMessage:"Para ingredientes especiales, anótalos en NOTAS.", phoneError:"El teléfono debe tener 8 dígitos" },
-        zh: { shopName:"Soda Sonrisas", shopDesc:"✨ 快乐风味 | 扫码付款", cartTitle:"🛒 我的订单", totalLabel:"总计", generateBtn:"📱 生成付款二维码", modalTitle:"📱 请出示此码", closeBtn:"完成", emptyCart:"✨ 暂未选择菜品", itemsCount:(n)=>`${n} 个菜品`, conOlor:"正常口味", sinOlor:"清淡", deLaCasa:"招牌升级 (+₡400)", normal:"普通", priceTitle:"💰 输入加料价格 (最低 ₡1000)", confirm:"确认", cancel:"取消", addExtraDisabled:"请先添加主菜", phoneLabel:"📞 联系电话 *", phonePlaceholder:"8位数字", notesLabel:"📝 备注", alertTitle:"📢 重要提示", alertMessage:"如需特殊配料，请在备注中说明。", phoneError:"电话号码必须为8位数字" }
-    };
-
-    function getText(key, ...args) { let val = TEXTS[currentLang][key]; return typeof val === 'function' ? val(...args) : val; }
-    function getProductName(p) { return currentLang==='en'?p.name_en:currentLang==='zh'?p.name_zh:p.name_es; }
-    function getExtraName(e) { return currentLang==='en'?e.name_en:currentLang==='zh'?e.name_zh:e.name_es; }
-    function getProductFinalPrice(basePrice, customType) { return customType === 'type1' ? basePrice + 400 : basePrice; }
-    function getAttrCode(importType, customType) { let code=0; if(importType==='local') code+=1; if(customType==='type1') code+=2; return code; }
-    function isSimpleProduct(code) { return SIMPLE_PRODUCT_CODES.has(code); }
-
     function getMenuUrl() { return `${SUPABASE_URL}/storage/v1/object/public/${BUCKET_NAME}/${FILE_PATH}?t=${Date.now()}`; }
 
-    window.refreshMenu = async function() {
-        const loading = document.getElementById('loadingOverlay');
-        const main = document.getElementById('mainContent');
-        loading.style.display = 'flex';
-        loading.innerHTML = '<div class="spinner"></div><div>Actualizando menú...</div>';
-        main.style.display = 'none';
-        await loadMenuData();
-    };
+    let PRODUCTS = [], EXTRAS = [], cart = [], currentLang = 'es', pendingExtra = null, filteredProducts = [];
 
-    async function loadMenuData() {
-        try {
-            const res = await fetch(getMenuUrl(), { cache:'no-cache', headers:{'Cache-Control':'no-cache'} });
-            if(!res.ok) throw new Error(`HTTP ${res.status}`);
-            const data = await res.json();
-            PRODUCTS = data.products || [];
-            EXTRAS = data.extras || [];
-            filteredProducts = PRODUCTS.filter(p => p.active !== false);
-            document.getElementById('loadingOverlay').style.display = 'none';
-            document.getElementById('mainContent').style.display = 'block';
-            renderMenu();
-            showAlert();
-        } catch(e) {
-            document.getElementById('loadingOverlay').innerHTML = `<div style="color:#e74c3c;text-align:center;padding:20px;">❌ Error: ${e.message}<br><br><button onclick="location.reload()" style="padding:10px 20px;background:#ff6b35;color:white;border:none;border-radius:30px;">Reintentar</button></div>`;
+    const TEXTS = {
+        en: { shopName:"Soda Sonrisas", shopDesc:"✨ Scan & pay easily", cartTitle:"🛒 My Order", totalLabel:"Total", generateBtn:"📱 Generate QR to Pay", modalTitle:"📱 Show QR to cashier", closeBtn:"Close", emptyCart:"No items selected", itemsCount:(n)=>`${n} item${n!==1?'s':''}`, conOlor:"Con olor", sinOlor:"Sin olor", deLaCasa:"De la casa (+₡400)", normal:"Normal", priceTitle:"Enter price (min ₡1000)", confirm:"Confirm", cancel:"Cancel", addExtraDisabled:"Add a main dish first", phoneLabel:"📞 Contact phone *", phonePlaceholder:"8 digits", notesLabel:"📝 Notes / Instructions", alertTitle:"📢 Important", alertMessage:"Special ingredients? Mention in NOTES.", phoneError:"Phone must be 8 digits" },
+        es: { shopName:"Soda Sonrisas", shopDesc:"✨ Escanea y paga fácil", cartTitle:"🛒 Mi pedido", totalLabel:"Total", generateBtn:"📱 Generar QR para pagar", modalTitle:"📱 Muestra este QR", closeBtn:"Cerrar", emptyCart:"Sin productos", itemsCount:(n)=>`${n} producto${n!==1?'s':''}`, conOlor:"Con olor", sinOlor:"Sin olor", deLaCasa:"De la casa (+₡400)", normal:"Normal", priceTitle:"Ingrese precio (mín ₡1000)", confirm:"Confirmar", cancel:"Cancelar", addExtraDisabled:"Agregue un plato principal primero", phoneLabel:"📞 Teléfono *", phonePlaceholder:"8 dígitos", notesLabel:"📝 Notas", alertTitle:"📢 Aviso", alertMessage:"Ingredientes especiales → en NOTAS.", phoneError:"El teléfono debe tener 8 dígitos" },
+        zh: { shopName:"Soda Sonrisas", shopDesc:"✨ 扫码快捷支付", cartTitle:"🛒 我的订单", totalLabel:"总计", generateBtn:"📱 生成支付二维码", modalTitle:"📱 向收银员出示此码", closeBtn:"关闭", emptyCart:"暂无菜品", itemsCount:(n)=>`${n} 个菜品`, conOlor:"正常口味", sinOlor:"清淡口味", deLaCasa:"招牌升级 (+₡400)", normal:"普通", priceTitle:"输入价格 (最低 ₡1000)", confirm:"确认", cancel:"取消", addExtraDisabled:"请先添加主菜", phoneLabel:"📞 联系电话 *", phonePlaceholder:"8位数字", notesLabel:"📝 备注", alertTitle:"📢 提示", alertMessage:"如需特殊配料请在备注说明", phoneError:"电话号码必须为8位数字" }
+    };
+    function getText(k,...a){ let v=TEXTS[currentLang][k]; return typeof v==='function'?v(...a):v; }
+    function getProductName(p){ return currentLang==='en'?p.name_en:currentLang==='zh'?p.name_zh:p.name_es; }
+    function getExtraName(e){ return currentLang==='en'?e.name_en:currentLang==='zh'?e.name_zh:e.name_es; }
+    function getProductFinalPrice(base, customType){ return customType==='type1'?base+400:base; }
+    function getAttrCode(importType,customType){ let code=0; if(importType==='local') code+=1; if(customType==='type1') code+=2; return code; }
+    function isSimpleProduct(code){ return SIMPLE_PRODUCT_CODES.has(code); }
+
+    window.refreshMenu=async()=>{ 
+        const loadDiv=document.getElementById('loadingOverlay'), mainDiv=document.getElementById('mainContent');
+        loadDiv.style.display='flex'; loadDiv.innerHTML='<div class="spinner"></div><div>Actualizando...</div>';
+        mainDiv.style.display='none'; await loadMenuData();
+    };
+    async function loadMenuData(){
+        try{
+            const resp=await fetch(getMenuUrl(),{cache:'no-cache'});
+            if(!resp.ok) throw new Error(`HTTP ${resp.status}`);
+            const data=await resp.json();
+            PRODUCTS=data.products||[]; EXTRAS=data.extras||[];
+            filteredProducts=PRODUCTS.filter(p=>p.active!==false);
+            document.getElementById('loadingOverlay').style.display='none';
+            document.getElementById('mainContent').style.display='block';
+            renderMenu(); showAlert();
+        }catch(e){
+            document.getElementById('loadingOverlay').innerHTML=`<div style="color:#e74c3c; text-align:center;"><div>❌ Error: ${e.message}</div><br><button onclick="location.reload()" style="padding:12px 24px; background:#ff6b35; border:none; border-radius:40px; color:white;">Reintentar</button></div>`;
         }
     }
 
-    function renderMenu() {
-        const container = document.getElementById('menu-container');
-        let html = `<div class="category">${currentLang==='en'?'Main Dishes':currentLang==='zh'?'主菜':'Platos'}</div>`;
-        for(let prod of filteredProducts) {
-            const isSimple = isSimpleProduct(prod.code);
-            const name = getProductName(prod);
-            const cartItem = cart.find(i=>i.productId===prod.code);
-            const qty = cartItem ? cartItem.qty : 0;
-            const importType = cartItem ? (isSimple ? 'imported' : cartItem.importType) : (isSimple ? 'imported' : 'imported');
-            const customType = cartItem ? (isSimple ? '' : cartItem.customType) : (isSimple ? '' : '');
-            const price = getProductFinalPrice(prod.basePrice, isSimple ? '' : customType);
-            html += `<div class="menu-card" data-id="${prod.code}"><div class="menu-header"><span class="menu-name">${escapeHtml(name)}</span><span class="menu-price">₡${price}</span></div>`;
-            if(!isSimple) {
-                html += `<div class="options-row">
-                    <div class="option-group"><span class="option-label">🧅</span>
-                    <button class="option-btn ${importType==='local'?'active':''}" data-type="import" data-value="local" data-product="${prod.code}">${getText('conOlor')}</button>
-                    <button class="option-btn ${importType==='imported'?'active':''}" data-type="import" data-value="imported" data-product="${prod.code}">${getText('sinOlor')}</button></div>
-                    <div class="option-group"><span class="option-label">⭐</span>
-                    <button class="option-btn ${customType===''?'active':''}" data-type="custom" data-value="" data-product="${prod.code}">${getText('normal')}</button>
-                    <button class="option-btn ${customType==='type1'?'active':''}" data-type="custom" data-value="type1" data-product="${prod.code}">${getText('deLaCasa')}</button></div>
-                </div>`;
+    function renderMenu(){
+        const container=document.getElementById('menu-container');
+        let html=`<div class="category">${currentLang==='en'?'Main Dishes':currentLang==='zh'?'主菜':'Platos'}</div>`;
+        for(let p of filteredProducts){
+            const isSimple=isSimpleProduct(p.code);
+            const name=getProductName(p);
+            const cartItem=cart.find(i=>i.productId===p.code);
+            const qty=cartItem?cartItem.qty:0;
+            const importType=(cartItem&&!isSimple)?cartItem.importType:'imported';
+            const customType=(cartItem&&!isSimple)?cartItem.customType:'';
+            const displayPrice=getProductFinalPrice(p.basePrice,isSimple?'':customType);
+            html+=`<div class="menu-card"><div class="menu-header"><span class="menu-name">${escapeHtml(name)}</span><span class="menu-price">₡${displayPrice}</span></div>`;
+            if(!isSimple){
+                html+=`<div class="options-row"><div class="option-group"><span class="option-label">🧅</span>
+                <button class="option-btn ${importType==='local'?'active':''}" data-type="import" data-value="local" data-product="${p.code}">${getText('conOlor')}</button>
+                <button class="option-btn ${importType==='imported'?'active':''}" data-type="import" data-value="imported" data-product="${p.code}">${getText('sinOlor')}</button></div>
+                <div class="option-group"><span class="option-label">⭐</span>
+                <button class="option-btn ${customType===''?'active':''}" data-type="custom" data-value="" data-product="${p.code}">${getText('normal')}</button>
+                <button class="option-btn ${customType==='type1'?'active':''}" data-type="custom" data-value="type1" data-product="${p.code}">${getText('deLaCasa')}</button></div></div>`;
             }
-            html += `<div class="qty-control"><button class="qty-btn minus" data-action="decr" data-product-id="${prod.code}">−</button><span class="qty-number">${qty}</span><button class="qty-btn" data-action="incr" data-product-id="${prod.code}">+</button></div>`;
-            if(!isSimple && EXTRAS.length) {
-                html += `<div class="extras-section"><div class="extras-title">➕ ${currentLang==='en'?'Add-ons':currentLang==='zh'?'加料':'Extras'}</div><div class="extra-buttons">`;
-                EXTRAS.forEach(ext => { html += `<button class="extra-btn ${qty===0?'disabled':''}" data-extra-id="${ext.id}" data-extra-name="${getExtraName(ext)}" data-product-id="${prod.code}" ${qty===0?'disabled':''}><span>${getExtraName(ext)}</span><span>₡${ext.defaultPrice}</span></button>`; });
-                html += `</div></div>`;
+            html+=`<div class="qty-control"><button class="qty-btn minus" data-action="decr" data-product-id="${p.code}">−</button><span class="qty-number">${qty}</span><button class="qty-btn" data-action="incr" data-product-id="${p.code}">+</button></div>`;
+            if(!isSimple){
+                html+=`<div class="extras-section"><div class="extras-title">➕ ${currentLang==='en'?'Add-ons':currentLang==='zh'?'加料':'Extras'}</div><div class="extra-buttons">`;
+                EXTRAS.forEach(ext=>{ html+=`<button class="extra-btn ${qty===0?'disabled':''}" data-extra-id="${ext.id}" data-extra-name="${getExtraName(ext)}" data-product-id="${p.code}" ${qty===0?'disabled':''}><span>${getExtraName(ext)}</span><span>₡${ext.defaultPrice}</span></button>`; });
+                html+=`</div></div>`;
             }
-            html += `</div>`;
+            html+=`</div>`;
         }
-        container.innerHTML = html;
+        container.innerHTML=html;
         attachEvents();
     }
 
-    function attachEvents() {
-        document.querySelectorAll('.qty-btn').forEach(btn => {
-            btn.onclick = (e) => {
+    function attachEvents(){
+        document.querySelectorAll('.qty-btn').forEach(btn=>{
+            btn.onclick=e=>{
                 e.stopPropagation();
-                const action = btn.dataset.action;
-                const pid = parseInt(btn.dataset.productId);
-                const prod = PRODUCTS.find(p=>p.code===pid);
-                if(!prod) return;
-                let idx = cart.findIndex(i=>i.productId===pid);
-                if(action==='incr') {
-                    if(idx===-1) {
-                        cart.push({ productId:pid, name:getProductName(prod), basePrice:prod.basePrice, qty:1, importType:'imported', customType:'', extras:[] });
-                        if(isSimpleProduct(pid)) { cart[cart.length-1].importType='imported'; cart[cart.length-1].customType=''; }
-                    } else cart[idx].qty++;
-                } else if(action==='decr' && idx!==-1) {
-                    if(cart[idx].qty<=1) cart.splice(idx,1);
-                    else cart[idx].qty--;
+                const action=btn.dataset.action, productId=parseInt(btn.dataset.productId);
+                const product=PRODUCTS.find(p=>p.code===productId);
+                if(!product) return;
+                const isSimple=isSimpleProduct(productId);
+                let idx=cart.findIndex(i=>i.productId===productId);
+                if(action==='incr'){
+                    if(idx===-1){
+                        const newItem={ productId, name:getProductName(product), basePrice:product.basePrice, qty:1, importType:'imported', customType:'', extras:[] };
+                        if(isSimple) newItem.importType='imported';
+                        cart.push(newItem);
+                    }else cart[idx].qty++;
+                }else if(action==='decr'){
+                    if(idx!==-1){
+                        if(cart[idx].qty<=1) cart.splice(idx,1);
+                        else cart[idx].qty--;
+                    }
                 }
                 updateAll();
             };
         });
-        document.querySelectorAll('.option-btn').forEach(btn => {
-            btn.onclick = (e) => {
+        document.querySelectorAll('.option-btn').forEach(btn=>{
+            btn.onclick=e=>{
                 e.stopPropagation();
-                const pid = parseInt(btn.dataset.product);
-                if(isSimpleProduct(pid)) return;
-                const type = btn.dataset.type, val = btn.dataset.value;
-                let idx = cart.findIndex(i=>i.productId===pid);
-                if(idx===-1) {
-                    const prod = PRODUCTS.find(p=>p.code===pid);
-                    if(prod) cart.push({ productId:pid, name:getProductName(prod), basePrice:prod.basePrice, qty:0, importType:type==='import'?val:'imported', customType:type==='custom'?val:'', extras:[] });
-                    idx = cart.length-1;
+                const type=btn.dataset.type, value=btn.dataset.value, productId=parseInt(btn.dataset.product);
+                if(isSimpleProduct(productId)) return;
+                let idx=cart.findIndex(i=>i.productId===productId);
+                if(idx===-1){
+                    const p=PRODUCTS.find(pr=>pr.code===productId);
+                    if(p) cart.push({ productId, name:getProductName(p), basePrice:p.basePrice, qty:0, importType:type==='import'?value:'imported', customType:type==='custom'?value:'', extras:[] });
+                    idx=cart.length-1;
                 }
-                if(idx!==-1) { if(type==='import') cart[idx].importType=val; if(type==='custom') cart[idx].customType=val; }
+                if(idx!==-1){
+                    if(type==='import') cart[idx].importType=value;
+                    if(type==='custom') cart[idx].customType=value;
+                }
                 updateAll();
             };
         });
-        document.querySelectorAll('.extra-btn').forEach(btn => {
-            btn.onclick = (e) => {
+        document.querySelectorAll('.extra-btn').forEach(btn=>{
+            btn.onclick=e=>{
                 if(btn.disabled) return;
-                const pid = parseInt(btn.dataset.productId);
-                if(isSimpleProduct(pid)) return;
-                const item = cart.find(i=>i.productId===pid);
-                if(!item || item.qty===0) { alert(getText('addExtraDisabled')); return; }
-                pendingExtra = { productId:pid, extraId:btn.dataset.extraId, extraName:btn.dataset.extraName };
-                document.getElementById('priceModalTitle').innerText = getText('priceTitle');
-                document.getElementById('priceInput').value = 1000;
-                document.getElementById('priceModal').style.display = 'flex';
+                const extraId=btn.dataset.extraId, extraName=btn.dataset.extraName, productId=parseInt(btn.dataset.productId);
+                if(isSimpleProduct(productId)) return;
+                const item=cart.find(i=>i.productId===productId);
+                if(!item||item.qty===0){ alert(getText('addExtraDisabled')); return; }
+                pendingExtra={ productId, extraId, extraName };
+                document.getElementById('priceModalTitle').innerText=getText('priceTitle');
+                document.getElementById('priceInput').value=1000;
+                document.getElementById('priceModal').style.display='flex';
             };
         });
     }
 
-    function confirmPrice() {
-        let price = parseInt(document.getElementById('priceInput').value);
-        if(isNaN(price) || price<1000) price=1000;
-        if(pendingExtra) {
-            const idx = cart.findIndex(i=>i.productId===pendingExtra.productId);
+    function confirmPrice(){
+        let price=parseInt(document.getElementById('priceInput').value);
+        if(isNaN(price)||price<1000) price=1000;
+        if(pendingExtra){
+            const idx=cart.findIndex(i=>i.productId===pendingExtra.productId);
             if(idx!==-1) cart[idx].extras.push({ id:pendingExtra.extraId, name:pendingExtra.extraName, price });
         }
-        document.getElementById('priceModal').style.display = 'none';
-        pendingExtra = null;
+        document.getElementById('priceModal').style.display='none';
+        pendingExtra=null;
         updateAll();
     }
-    function cancelPrice() { document.getElementById('priceModal').style.display = 'none'; pendingExtra = null; }
-    window.removeExtraFromCart = function(itemIdx, extraIdx) { if(cart[itemIdx]) cart[itemIdx].extras.splice(extraIdx,1); updateAll(); };
-
-    function updateAll() { renderMenu(); renderCart(); updateCartBadge(); }
-    function renderCart() {
-        const container = document.getElementById('cart-items-list');
+    function cancelPrice(){ document.getElementById('priceModal').style.display='none'; pendingExtra=null; }
+    window.removeExtraFromCart=function(itemIdx,extraIdx){ if(cart[itemIdx]) cart[itemIdx].extras.splice(extraIdx,1); updateAll(); };
+    function updateAll(){ renderMenu(); renderCart(); updateCartBadge(); }
+    function renderCart(){
+        const container=document.getElementById('cart-items-list');
         let total=0, html='';
-        for(let idx=0; idx<cart.length; idx++) {
-            const it = cart[idx];
-            if(it.qty===0 && it.extras.length===0) continue;
-            const finalPrice = getProductFinalPrice(it.basePrice, isSimpleProduct(it.productId)?'':it.customType);
-            const itemTotal = finalPrice * it.qty;
-            total += itemTotal;
-            let attr = '';
-            if(!isSimpleProduct(it.productId)) { if(it.importType==='local') attr+=' (Con olor)'; if(it.customType==='type1') attr+=' (De la casa)'; }
-            html += `<div class="cart-item-row"><div class="cart-item-name">${escapeHtml(it.name)}${escapeHtml(attr)} ×${it.qty}</div><div class="cart-item-price">₡${itemTotal}</div></div>`;
-            it.extras.forEach((ex, eidx) => { total += ex.price; html += `<div class="cart-item-row" style="padding-left:20px;"><div class="cart-item-name">↳ ${escapeHtml(ex.name)}</div><div><span class="cart-item-price">₡${ex.price}</span><button class="delete-extra" onclick="removeExtraFromCart(${idx}, ${eidx})">✕</button></div></div>`; });
+        for(let idx=0;idx<cart.length;idx++){
+            const item=cart[idx];
+            if(item.qty===0&&item.extras.length===0) continue;
+            const isSimple=isSimpleProduct(item.productId);
+            const finalPrice=getProductFinalPrice(item.basePrice,isSimple?'':item.customType);
+            const itemTotal=finalPrice*item.qty;
+            total+=itemTotal;
+            let attr='';
+            if(!isSimple){
+                if(item.importType==='local') attr+=' (Con olor)';
+                if(item.customType==='type1') attr+=' (De la casa)';
+            }
+            html+=`<div class="cart-item-row"><div class="cart-item-name">${escapeHtml(item.name)}${escapeHtml(attr)} ×${item.qty}</div><div class="cart-item-price">₡${itemTotal}</div></div>`;
+            for(let e=0;e<item.extras.length;e++){
+                total+=item.extras[e].price;
+                html+=`<div class="cart-item-row" style="padding-left:20px;"><div class="cart-item-name">↳ ${escapeHtml(item.extras[e].name)}</div><div><span class="cart-item-price">₡${item.extras[e].price}</span><button class="delete-extra" onclick="removeExtraFromCart(${idx},${e})">✕</button></div></div>`;
+            }
         }
-        if(!html) html = '<div class="empty-cart">✨ ' + getText('emptyCart') + '</div>';
-        container.innerHTML = html;
-        document.getElementById('cart-total-amount').innerHTML = `₡${total}`;
-        const hasItems = cart.some(i=>i.qty>0);
-        document.getElementById('generateQRBtn').classList.toggle('disabled', !hasItems);
+        if(cart.length===0||html==='') html='<div class="empty-cart">'+getText('emptyCart')+'</div>';
+        container.innerHTML=html;
+        document.getElementById('cart-total-amount').innerHTML=`₡${total}`;
+        const hasItems=cart.some(i=>i.qty>0);
+        document.getElementById('generateQRBtn').classList.toggle('disabled',!hasItems);
     }
-    function updateCartBadge() { const totalQty = cart.reduce((s,i)=>s+i.qty,0); document.getElementById('cart-count').innerHTML = getText('itemsCount', totalQty); }
-    function escapeHtml(s) { if(!s) return ''; return s.replace(/[&<>]/g, m=> m==='&'?'&amp;':m==='<'?'&lt;':'&gt;'); }
-    function generateSimpleQRContent() {
-        const valid = cart.filter(i=>i.qty>0);
+    function updateCartBadge(){ const totalQty=cart.reduce((s,i)=>s+i.qty,0); document.getElementById('cart-count').innerHTML=getText('itemsCount',totalQty); }
+    function escapeHtml(s){ if(!s) return ''; return s.replace(/[&<>]/g,function(m){ return m==='&'?'&amp;':m==='<'?'&lt;':'&gt;'; }); }
+    function generateSimpleQRContent(){
+        const valid=cart.filter(i=>i.qty>0);
         if(!valid.length) return '';
-        return valid.map(item => {
-            let attr = 0;
-            if(!isSimpleProduct(item.productId)) attr = getAttrCode(item.importType, item.customType);
-            let str = `${item.productId}|${item.qty}|${attr}`;
-            if(item.extras.length) str += `|${item.extras.map(e=>`${e.id}|${e.price}`).join('!')}`;
+        return valid.map(item=>{
+            const isSimple=isSimpleProduct(item.productId);
+            let attrCode=0;
+            if(!isSimple) attrCode=getAttrCode(item.importType,item.customType);
+            let str=`${item.productId}|${item.qty}|${attrCode}`;
+            if(item.extras.length) str+=`|${item.extras.map(e=>`${e.id}|${e.price}`).join('!')}`;
             return str;
         }).join(';');
     }
-    function validatePhone() { const phone = document.getElementById('phoneInput').value.trim(); const ok = !phone || /^\d{8}$/.test(phone); document.getElementById('phoneError').style.display = ok ? 'none' : 'block'; return ok; }
-    window.generateOrderQR = function() {
-        if(!validatePhone()) { document.getElementById('phoneInput').focus(); return; }
-        const valid = cart.filter(i=>i.qty>0);
-        if(!valid.length) { alert(getText('emptyCart')); return; }
-        let total = 0;
-        for(let it of valid) { const fp = getProductFinalPrice(it.basePrice, isSimpleProduct(it.productId)?'':it.customType); total += fp*it.qty; if(it.extras) total += it.extras.reduce((s,e)=>s+e.price,0); }
-        const phone = document.getElementById('phoneInput').value.trim();
-        const notes = document.getElementById('notesInput').value.trim();
-        let qrContent = generateSimpleQRContent();
-        if(phone) qrContent += `|${phone}`;
-        if(notes) qrContent += `|${notes.replace(/\|/g,' ')}`;
-        const modal = document.getElementById('qrModal');
-        const qrDiv = document.getElementById('qr-code');
-        qrDiv.innerHTML = '';
-        try { new QRCode(qrDiv, { text:qrContent, width:210, height:210 }); } catch(e) { qrDiv.innerHTML='<div style="color:red;">QR error</div>'; }
-        const itemCount = valid.reduce((s,i)=>s+i.qty,0);
-        document.getElementById('qr-order-summary').innerHTML = `<div><strong>${itemCount} producto(s)</strong></div><div>Total: ₡${total}</div>${phone?`<div>📞 Tel: ${phone}</div>`:''}${notes?`<div>📝 Notas: ${escapeHtml(notes.substring(0,50))}</div>`:''}`;
-        document.getElementById('modal-title').innerHTML = getText('modalTitle');
-        document.getElementById('close-btn').innerHTML = getText('closeBtn');
-        modal.style.display = 'flex';
+    function validatePhone(){ const p=document.getElementById('phoneInput').value.trim(); if(p&&!/^\d{8}$/.test(p)){ document.getElementById('phoneError').style.display='block'; return false; } document.getElementById('phoneError').style.display='none'; return true; }
+    window.generateOrderQR=function(){
+        if(!validatePhone()){ document.getElementById('phoneError').style.display='block'; document.getElementById('phoneInput').focus(); return; }
+        const valid=cart.filter(i=>i.qty>0);
+        if(!valid.length){ alert(getText('emptyCart')); return; }
+        let total=0;
+        for(let i of valid){
+            const isSimple=isSimpleProduct(i.productId);
+            total+=getProductFinalPrice(i.basePrice,isSimple?'':i.customType)*i.qty;
+            if(i.extras) total+=i.extras.reduce((s,e)=>s+e.price,0);
+        }
+        const phone=document.getElementById('phoneInput').value.trim();
+        const notes=document.getElementById('notesInput').value.trim();
+        let qr=generateSimpleQRContent();
+        if(phone) qr+=`|${phone}`;
+        if(notes) qr+=`|${notes.replace(/\|/g,' ')}`;
+        const modal=document.getElementById('qrModal');
+        const qrDiv=document.getElementById('qr-code');
+        qrDiv.innerHTML='';
+        new QRCode(qrDiv,{text:qr,width:220,height:220});
+        document.getElementById('qr-order-summary').innerHTML=`<div><strong>${valid.reduce((s,i)=>s+i.qty,0)} producto(s)</strong></div><div>Total: ₡${total}</div>${phone?`<div>📞 Tel: ${phone}</div>`:''}${notes?`<div>📝 Notas: ${escapeHtml(notes.substring(0,50))}</div>`:''}`;
+        document.getElementById('modal-title').innerHTML=getText('modalTitle');
+        document.getElementById('close-btn').innerHTML=getText('closeBtn');
+        modal.style.display='flex';
     };
-    window.closeQRModal = () => { document.getElementById('qrModal').style.display = 'none'; };
-    function showAlert() { document.getElementById('alertTitle').innerText = getText('alertTitle'); document.getElementById('alertMessage').innerText = getText('alertMessage'); document.getElementById('alertModal').style.display = 'flex'; }
-    window.closeAlert = () => { document.getElementById('alertModal').style.display = 'none'; };
-    function setLanguage(lang) {
-        currentLang = lang;
-        document.getElementById('shop-name').innerText = TEXTS[lang].shopName;
-        document.getElementById('shop-desc').innerText = TEXTS[lang].shopDesc;
-        document.getElementById('cart-title').innerText = TEXTS[lang].cartTitle;
-        document.getElementById('total-label').innerText = TEXTS[lang].totalLabel;
-        document.getElementById('generateQRBtn').innerHTML = TEXTS[lang].generateBtn;
-        document.getElementById('phone-label').innerHTML = getText('phoneLabel');
-        document.getElementById('phoneInput').placeholder = getText('phonePlaceholder');
-        document.getElementById('notes-label').innerHTML = getText('notesLabel');
-        for(let item of cart) { const p = PRODUCTS.find(p=>p.code===item.productId); if(p) item.name = getProductName(p); for(let ex of item.extras) { const ed = EXTRAS.find(e=>e.id===ex.id); if(ed) ex.name = getExtraName(ed); } }
+    window.closeQRModal=()=>{ document.getElementById('qrModal').style.display='none'; };
+    function showAlert(){ document.getElementById('alertTitle').innerText=getText('alertTitle'); document.getElementById('alertMessage').innerText=getText('alertMessage'); document.getElementById('alertModal').style.display='flex'; }
+    window.closeAlert=()=>{ document.getElementById('alertModal').style.display='none'; };
+    function setLanguage(lang){
+        currentLang=lang;
+        document.getElementById('shop-name').innerText=TEXTS[lang].shopName;
+        document.getElementById('shop-desc').innerText=TEXTS[lang].shopDesc;
+        document.getElementById('cart-title').innerText=TEXTS[lang].cartTitle;
+        document.getElementById('total-label').innerText=TEXTS[lang].totalLabel;
+        document.getElementById('generateQRBtn').innerHTML=TEXTS[lang].generateBtn;
+        document.getElementById('phone-label').innerHTML=getText('phoneLabel');
+        document.getElementById('phoneInput').placeholder=getText('phonePlaceholder');
+        document.getElementById('notes-label').innerHTML=getText('notesLabel');
+        for(let item of cart){
+            const p=PRODUCTS.find(pr=>pr.code===item.productId);
+            if(p) item.name=getProductName(p);
+            for(let e of item.extras){ const ed=EXTRAS.find(ex=>ex.id===e.id); if(ed) e.name=getExtraName(ed); }
+        }
         renderMenu(); renderCart();
     }
-    document.querySelectorAll('.lang-btn').forEach(btn => btn.addEventListener('click',()=>{ const l=btn.dataset.lang; setLanguage(l); document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); }));
-    document.getElementById('searchInput').addEventListener('input',(e)=>{ const t=e.target.value.toLowerCase(); filteredProducts = PRODUCTS.filter(p=>p.active!==false && (p.name_es.toLowerCase().includes(t)||p.name_en.toLowerCase().includes(t)||p.name_zh.toLowerCase().includes(t))); renderMenu(); });
-    document.getElementById('phoneInput').addEventListener('input', validatePhone);
+    document.querySelectorAll('.lang-btn').forEach(btn=>{ btn.addEventListener('click',()=>{ const l=btn.dataset.lang; setLanguage(l); document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); }); });
+    document.getElementById('searchInput').addEventListener('input',(e)=>{ const t=e.target.value.toLowerCase(); filteredProducts=PRODUCTS.filter(p=>p.active!==false&&(p.name_es.toLowerCase().includes(t)||p.name_en.toLowerCase().includes(t)||p.name_zh.toLowerCase().includes(t))); renderMenu(); });
+    document.getElementById('phoneInput').addEventListener('input',validatePhone);
     loadMenuData();
 </script>
 </body>
