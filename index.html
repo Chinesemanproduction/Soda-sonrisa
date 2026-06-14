@@ -1,5 +1,3 @@
-以下是您所需的中餐厅点餐页面的完整代码。它实现了一个支持多语言、可添加加料和选项的在线点餐系统，并修复了底部菜单被遮挡以及特定菜品选项显示的问题。
-```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -17,7 +15,7 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background: #f8f9fc;
-            padding: 16px 16px 160px 16px;  /* 增加底部内边距，防止最后一个产品被底部浮动购物车遮挡 */
+            padding: 16px 16px 120px 16px;
         }
 
         .header {
@@ -260,8 +258,6 @@
             box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
             padding: 14px 16px;
             z-index: 100;
-            max-height: 45vh;
-            overflow-y: auto;
         }
         .cart-header {
             display: flex;
@@ -499,6 +495,10 @@
             z-index: 50;
             cursor: pointer;
         }
+        /* 确保底部卡片不被遮挡但保留安全区 */
+        .menu-container-spacer {
+            margin-bottom: 10px;
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs2@0.0.2/qrcode.min.js"></script>
 </head>
@@ -538,7 +538,7 @@
         <input type="text" id="searchInput" class="search-input" placeholder="🔍 Buscar producto...">
     </div>
 
-    <div id="menu-container"></div>
+    <div id="menu-container" class="menu-container-spacer"></div>
 
     <div class="cart-floating">
         <div class="cart-header">
@@ -594,6 +594,10 @@
     const BUCKET_NAME = 'menu';
     const FILE_PATH = 'menu.json';
     
+    // 定义不需要自定义选项(味道/升级) 并且 不允许加料的商品code列表
+    // 根据要求: code: 1,2,3,4,6,7,46,47 不可以选择加料和de la casa/normal 和 con olor/sin olor
+    const SIMPLE_PRODUCT_CODES = new Set([1, 2, 3, 4, 6, 7, 46, 47]);
+    
     function getMenuUrl() {
         return `${SUPABASE_URL}/storage/v1/object/public/${BUCKET_NAME}/${FILE_PATH}?t=${Date.now()}`;
     }
@@ -604,9 +608,6 @@
     let currentLang = 'es';
     let pendingExtra = null;
     let filteredProducts = [];
-
-    // 定义需要隐藏加料和选项的产品编码 (code 1,2,3,4,6,7,46,47)
-    const NO_EXTRA_OPTIONS_CODES = [1, 2, 3, 4, 6, 7, 46, 47];
 
     const TEXTS = {
         en: {
@@ -674,14 +675,20 @@
     }
 
     function getProductFinalPrice(basePrice, customType) {
+        // customType === 'type1' 表示 De la casa (升级)
         return customType === 'type1' ? basePrice + 400 : basePrice;
     }
 
     function getAttrCode(importType, customType) {
         let code = 0;
-        if (importType === 'local') code += 1;
-        if (customType === 'type1') code += 2;
+        if (importType === 'local') code += 1;   // con olor
+        if (customType === 'type1') code += 2;   // de la casa
         return code;
+    }
+
+    // 判断商品是否为简单商品（无选项无加料）
+    function isSimpleProduct(productCode) {
+        return SIMPLE_PRODUCT_CODES.has(productCode);
     }
 
     window.refreshMenu = async function() {
@@ -741,19 +748,14 @@
         
         for (let product of filteredProducts) {
             const productId = product.code;
+            const isSimple = isSimpleProduct(productId);
             const productName = getProductName(product);
             const cartItem = cart.find(i => i.productId === productId);
             const qty = cartItem ? cartItem.qty : 0;
-            const importType = cartItem ? cartItem.importType : 'imported';
-            const customType = cartItem ? cartItem.customType : '';
-            const displayPrice = getProductFinalPrice(product.basePrice, customType);
-            
-            // 检查当前产品是否属于禁止显示加料和特定选项的列表
-            const disableExtrasAndOptions = NO_EXTRA_OPTIONS_CODES.includes(productId);
-            
-            // 对于code 1,2,3,4,6,7,46,47：不显示“con olor/sin olor”和“de la casa/normal”选项，也不显示加料区域
-            // 其他产品正常显示
-            const showOptions = !disableExtrasAndOptions;
+            // 对于简单商品，强制importType为'imported', customType为空，忽略用户选项，但保留显示
+            const importType = cartItem ? (isSimple ? 'imported' : cartItem.importType) : (isSimple ? 'imported' : 'imported');
+            const customType = cartItem ? (isSimple ? '' : cartItem.customType) : (isSimple ? '' : '');
+            const displayPrice = getProductFinalPrice(product.basePrice, isSimple ? '' : customType);
             
             html += `
                 <div class="menu-card" data-product-id="${productId}">
@@ -763,8 +765,8 @@
                     </div>
             `;
             
-            // 只有允许的产品才显示选项行 (Con olor/Sin olor & De la casa/Normal)
-            if (showOptions) {
+            // 条件渲染选项区域：只有非简单商品才显示 con/sin olor 和 de la casa/normal
+            if (!isSimple) {
                 html += `
                     <div class="options-row">
                         <div class="option-group">
@@ -780,10 +782,8 @@
                     </div>
                 `;
             } else {
-                // 对于被禁用的产品，我们仍然需要隐藏的选项数据，但为了保持一致，不渲染任何选项行。
-                // 同时确保购物车中如果有这些产品，其选项默认为普通状态(imported & normal)
-                // 如果购物车中还没有数据，我们无需额外操作；如果已经有数据但正在渲染，沿用已有值，但用户不可见不可更改。
-                // 我们也可以添加一个隐藏字段确保值正确，但通过js后续同步更新。这里不显示任何options-row，保证界面简洁。
+                // 简单商品没有任何选项行，但为了样式一致性留空，但也可以不加 (跳过)
+                // 注意，为了整洁，我们这里不添加任何选项。
             }
             
             html += `
@@ -794,8 +794,8 @@
                     </div>
             `;
             
-            // 加料区域：只有非禁用产品才显示加料
-            if (showOptions && EXTRAS.length > 0) {
+            // 加料区域: 简单商品不应显示加料按钮 (根据需求)
+            if (!isSimple) {
                 html += `
                     <div class="extras-section">
                         <div class="extras-title">➕ ${currentLang === 'en' ? 'Add-ons' : currentLang === 'zh' ? '加料' : 'Extras'}</div>
@@ -809,10 +809,9 @@
                         </div>
                     </div>
                 `;
-            } else if (!showOptions && EXTRAS.length > 0) {
-                // 完全隐藏加料区域，不输出HTML
+            } else {
+                // 简单商品不显示加料区域，也不显示额外选项
             }
-            
             html += `</div>`;
         }
         
@@ -821,7 +820,7 @@
     }
 
     function attachEvents() {
-        // 数量增减
+        // 数量按钮事件
         document.querySelectorAll('.qty-btn').forEach(btn => {
             btn.onclick = (e) => {
                 e.stopPropagation();
@@ -829,14 +828,13 @@
                 const productId = parseInt(btn.dataset.productId);
                 const product = PRODUCTS.find(p => p.code === productId);
                 if (!product) return;
+                const isSimple = isSimpleProduct(productId);
                 
-                const cartIndex = cart.findIndex(i => i.productId === productId);
-                const disableExtrasAndOptions = NO_EXTRA_OPTIONS_CODES.includes(productId);
-                
+                let cartIndex = cart.findIndex(i => i.productId === productId);
                 if (action === 'incr') {
                     if (cartIndex === -1) {
-                        // 新增项目，根据是否禁用选项决定默认值
-                        const newItem = {
+                        // 新加购物车，根据是否为简单商品设置默认属性
+                        let newItem = {
                             productId: product.code,
                             name: getProductName(product),
                             basePrice: product.basePrice,
@@ -845,9 +843,8 @@
                             customType: '',
                             extras: []
                         };
-                        // 对于禁用选项的产品，强制设置importType为imported, customType为空字符串（normal）,并且不允许添加加料（extras永远为空）
-                        if (disableExtrasAndOptions) {
-                            newItem.importType = 'imported';
+                        if (isSimple) {
+                            newItem.importType = 'imported';     // sin olor 默认
                             newItem.customType = '';
                         }
                         cart.push(newItem);
@@ -867,30 +864,31 @@
             };
         });
         
-        // 选项按钮（仅对允许的产品有效，但事件本身绑定在按钮上；由于禁用的产品没有渲染这些按钮，所以安全）
+        // 选项按钮事件 (只有非简单商品会有这些按钮)
         document.querySelectorAll('.option-btn').forEach(btn => {
             btn.onclick = (e) => {
                 e.stopPropagation();
                 const type = btn.dataset.type;
                 const value = btn.dataset.value;
                 const productId = parseInt(btn.dataset.product);
-                let cartIndex = cart.findIndex(i => i.productId === productId);
-                const product = PRODUCTS.find(p => p.code === productId);
-                if (!product) return;
-                const disableExtrasAndOptions = NO_EXTRA_OPTIONS_CODES.includes(productId);
-                if (disableExtrasAndOptions) return; // 不应该发生，但安全起见拦截
+                // 安全检查，如果是简单商品不应该有选项按钮，但防御: 忽略操作
+                if (isSimpleProduct(productId)) return;
                 
+                let cartIndex = cart.findIndex(i => i.productId === productId);
                 if (cartIndex === -1) {
-                    cart.push({
-                        productId: product.code,
-                        name: getProductName(product),
-                        basePrice: product.basePrice,
-                        qty: 0,
-                        importType: type === 'import' ? value : 'imported',
-                        customType: type === 'custom' ? value : '',
-                        extras: []
-                    });
-                    cartIndex = cart.length - 1;
+                    const product = PRODUCTS.find(p => p.code === productId);
+                    if (product) {
+                        cart.push({
+                            productId: product.code,
+                            name: getProductName(product),
+                            basePrice: product.basePrice,
+                            qty: 0,
+                            importType: type === 'import' ? value : 'imported',
+                            customType: type === 'custom' ? value : '',
+                            extras: []
+                        });
+                        cartIndex = cart.length - 1;
+                    }
                 }
                 if (cartIndex !== -1) {
                     if (type === 'import') cart[cartIndex].importType = value;
@@ -900,13 +898,15 @@
             };
         });
         
-        // 加料按钮（仅对允许的产品可见）
+        // 加料按钮事件 (只有非简单商品才会有加料按钮)
         document.querySelectorAll('.extra-btn').forEach(btn => {
             btn.onclick = (e) => {
                 if (btn.disabled) return;
                 const extraId = btn.dataset.extraId;
                 const extraName = btn.dataset.extraName;
                 const productId = parseInt(btn.dataset.productId);
+                // 防御: 简单商品不应该有加料区域，但也拦截
+                if (isSimpleProduct(productId)) return;
                 const cartItem = cart.find(i => i.productId === productId);
                 if (!cartItem || cartItem.qty === 0) {
                     alert(getText('addExtraDisabled'));
@@ -959,13 +959,15 @@
         for (let idx = 0; idx < cart.length; idx++) {
             const item = cart[idx];
             if (item.qty === 0 && item.extras.length === 0) continue;
-            const finalPrice = getProductFinalPrice(item.basePrice, item.customType);
+            const finalPrice = getProductFinalPrice(item.basePrice, isSimpleProduct(item.productId) ? '' : item.customType);
             const itemTotal = finalPrice * item.qty;
             total += itemTotal;
             
             let attrText = '';
-            if (item.importType === 'local') attrText += ' (Con olor)';
-            if (item.customType === 'type1') attrText += ' (De la casa)';
+            if (!isSimpleProduct(item.productId)) {
+                if (item.importType === 'local') attrText += ' (Con olor)';
+                if (item.customType === 'type1') attrText += ' (De la casa)';
+            }
             
             itemsHtml += `
                 <div class="cart-item-row">
@@ -1017,7 +1019,12 @@
         if (validItems.length === 0) return '';
         const parts = [];
         for (let item of validItems) {
-            const attrCode = getAttrCode(item.importType, item.customType);
+            const isSimple = isSimpleProduct(item.productId);
+            // 对于简单商品，attrCode 固定为 0 (无con olor / de la casa 概念)
+            let attrCode = 0;
+            if (!isSimple) {
+                attrCode = getAttrCode(item.importType, item.customType);
+            }
             let itemStr = `${item.productId}|${item.qty}|${attrCode}`;
             if (item.extras && item.extras.length > 0) {
                 const extrasStr = item.extras.map(e => `${e.id}|${e.price}`).join('!');
@@ -1053,7 +1060,8 @@
         
         let total = 0;
         for (let item of validItems) {
-            const finalPrice = getProductFinalPrice(item.basePrice, item.customType);
+            const isSimple = isSimpleProduct(item.productId);
+            const finalPrice = getProductFinalPrice(item.basePrice, isSimple ? '' : item.customType);
             total += finalPrice * item.qty;
             if (item.extras) total += item.extras.reduce((s, e) => s + e.price, 0);
         }
@@ -1153,4 +1161,3 @@
 </script>
 </body>
 </html>
-```
