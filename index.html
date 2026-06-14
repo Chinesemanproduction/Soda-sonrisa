@@ -18,6 +18,11 @@
             padding: 16px 16px 120px 16px;
         }
 
+        /* 解决底部产品被遮住的问题：为浮动购物车预留足够空间，并确保滚动区域可见 */
+        .menu-container-wrapper {
+            padding-bottom: 20px;
+        }
+
         .header {
             text-align: center;
             margin-bottom: 20px;
@@ -248,6 +253,7 @@
             font-weight: 600;
         }
 
+        /* 强制允许所有产品都能选择加料和选项，移除之前的任何隐藏逻辑 */
         .cart-floating {
             position: fixed;
             bottom: 0;
@@ -534,7 +540,7 @@
         <input type="text" id="searchInput" class="search-input" placeholder="🔍 Buscar producto...">
     </div>
 
-    <div id="menu-container"></div>
+    <div id="menu-container" class="menu-container-wrapper"></div>
 
     <div class="cart-floating">
         <div class="cart-header">
@@ -600,6 +606,9 @@
     let currentLang = 'es';
     let pendingExtra = null;
     let filteredProducts = [];
+
+    // 定义需要强制显示选项和加料的产品编码集合 (1,2,3,4,6,7,46,47)
+    const FULL_OPTIONS_CODES = new Set([1, 2, 3, 4, 6, 7, 46, 47]);
 
     const TEXTS = {
         en: {
@@ -720,6 +729,11 @@
         }
     }
 
+    // 判断产品是否属于需要强制显示完整选项和加料集合（编码 1,2,3,4,6,7,46,47）
+    function shouldForceOptions(productCode) {
+        return FULL_OPTIONS_CODES.has(productCode);
+    }
+
     function renderMenu() {
         const container = document.getElementById('menu-container');
         let html = '';
@@ -733,45 +747,56 @@
         html += `<div class="category">${currentLang === 'en' ? 'Main Dishes' : currentLang === 'zh' ? '主菜' : 'Platos Principales'}</div>`;
         
         for (let product of filteredProducts) {
+            const productCode = product.code;
             const productName = getProductName(product);
-            const cartItem = cart.find(i => i.productId === product.code);
+            const cartItem = cart.find(i => i.productId === productCode);
             const qty = cartItem ? cartItem.qty : 0;
-            const importType = cartItem ? cartItem.importType : 'imported';
-            const customType = cartItem ? cartItem.customType : '';
+            // 对于需要强制选项的产品，即使数量为0也要保留选项状态；但是对于还未添加过的产品，初始化其选项默认值
+            let importType = cartItem ? cartItem.importType : 'imported';
+            let customType = cartItem ? cartItem.customType : '';
+            
+            // 重要：如果产品属于强制集合，确保每次渲染都有选项状态（如果没有购物车项但用户可能点击选项，但为了UI默认显示，首次可以用默认值）
+            // 但为了用户能选择，我们不管数量多少，选项按钮可交互，extras按钮也会显示可选（不再因为qty===0而禁用）
+            // 注意：原有逻辑 extras 按钮会被 disabled 当 qty === 0，但根据需求，编码1,2,3,4,6,7,46,47必须可以选择加料，所以需要覆盖禁用状态。
+            // 因此我们将在下方extra-buttons单独处理：如果是强制集合，移除 disabled 状态；否则维持原逻辑。
+            const forceFull = shouldForceOptions(productCode);
+            
             const displayPrice = getProductFinalPrice(product.basePrice, customType);
             
             html += `
-                <div class="menu-card" data-product-id="${product.code}">
+                <div class="menu-card" data-product-id="${productCode}">
                     <div class="menu-header">
-                        <span class="menu-name">${escapeHtml(productName)}</span>
+                        <span class="menu-name">${escapeHtml(productName)} (Cód: ${productCode})</span>
                         <span class="menu-price">₡${displayPrice}</span>
                     </div>
                     <div class="options-row">
                         <div class="option-group">
                             <span class="option-label">🧅</span>
-                            <button class="option-btn ${importType === 'local' ? 'active' : ''}" data-type="import" data-value="local" data-product="${product.code}">${getText('conOlor')}</button>
-                            <button class="option-btn ${importType === 'imported' ? 'active' : ''}" data-type="import" data-value="imported" data-product="${product.code}">${getText('sinOlor')}</button>
+                            <button class="option-btn ${importType === 'local' ? 'active' : ''}" data-type="import" data-value="local" data-product="${productCode}">${getText('conOlor')}</button>
+                            <button class="option-btn ${importType === 'imported' ? 'active' : ''}" data-type="import" data-value="imported" data-product="${productCode}">${getText('sinOlor')}</button>
                         </div>
                         <div class="option-group">
                             <span class="option-label">⭐</span>
-                            <button class="option-btn ${customType === '' ? 'active' : ''}" data-type="custom" data-value="" data-product="${product.code}">${getText('normal')}</button>
-                            <button class="option-btn ${customType === 'type1' ? 'active' : ''}" data-type="custom" data-value="type1" data-product="${product.code}">${getText('deLaCasa')}</button>
+                            <button class="option-btn ${customType === '' ? 'active' : ''}" data-type="custom" data-value="" data-product="${productCode}">${getText('normal')}</button>
+                            <button class="option-btn ${customType === 'type1' ? 'active' : ''}" data-type="custom" data-value="type1" data-product="${productCode}">${getText('deLaCasa')}</button>
                         </div>
                     </div>
                     <div class="qty-control">
-                        <button class="qty-btn minus" data-action="decr" data-product-id="${product.code}">−</button>
+                        <button class="qty-btn minus" data-action="decr" data-product-id="${productCode}">−</button>
                         <span class="qty-number">${qty}</span>
-                        <button class="qty-btn" data-action="incr" data-product-id="${product.code}">+</button>
+                        <button class="qty-btn" data-action="incr" data-product-id="${productCode}">+</button>
                     </div>
                     <div class="extras-section">
                         <div class="extras-title">➕ ${currentLang === 'en' ? 'Add-ons' : currentLang === 'zh' ? '加料' : 'Extras'}</div>
                         <div class="extra-buttons">
-                            ${EXTRAS.map(extra => `
-                                <button class="extra-btn ${qty === 0 ? 'disabled' : ''}" data-extra-id="${extra.id}" data-extra-name="${getExtraName(extra)}" data-product-id="${product.code}" ${qty === 0 ? 'disabled' : ''}>
+                            ${EXTRAS.map(extra => {
+                                // 对于需要强制选项的产品，只要产品存在（无论qty）都启用加料按钮；否则沿用原禁用规则（qty===0禁用）
+                                const isDisabled = (!forceFull && qty === 0);
+                                return `<button class="extra-btn ${isDisabled ? 'disabled' : ''}" data-extra-id="${extra.id}" data-extra-name="${getExtraName(extra)}" data-product-id="${productCode}" ${isDisabled ? 'disabled' : ''}>
                                     <span>${getExtraName(extra)}</span>
                                     <span>₡${extra.defaultPrice}</span>
-                                </button>
-                            `).join('')}
+                                </button>`;
+                            }).join('')}
                         </div>
                     </div>
                 </div>
@@ -857,14 +882,37 @@
                 const extraName = btn.dataset.extraName;
                 const productId = parseInt(btn.dataset.productId);
                 const cartItem = cart.find(i => i.productId === productId);
-                if (!cartItem || cartItem.qty === 0) {
+                // 对于强制选项的产品，就算当前cartItem不存在或数量为0，我们也允许添加加料
+                const forceFull = shouldForceOptions(productId);
+                if (!forceFull && (!cartItem || cartItem.qty === 0)) {
                     alert(getText('addExtraDisabled'));
                     return;
                 }
-                pendingExtra = { productId, extraId, extraName };
-                document.getElementById('priceModalTitle').innerText = getText('priceTitle');
-                document.getElementById('priceInput').value = 1000;
-                document.getElementById('priceModal').style.display = 'flex';
+                // 如果强制产品且cart中还没有条目，创建一个临时条目（数量为0但有加料）
+                let targetItem = cartItem;
+                if (forceFull && !targetItem) {
+                    const product = PRODUCTS.find(p => p.code === productId);
+                    if (product) {
+                        cart.push({
+                            productId: product.code,
+                            name: getProductName(product),
+                            basePrice: product.basePrice,
+                            qty: 0,
+                            importType: 'imported',
+                            customType: '',
+                            extras: []
+                        });
+                        targetItem = cart[cart.length - 1];
+                    }
+                }
+                if (targetItem) {
+                    pendingExtra = { productId, extraId, extraName };
+                    document.getElementById('priceModalTitle').innerText = getText('priceTitle');
+                    document.getElementById('priceInput').value = 1000;
+                    document.getElementById('priceModal').style.display = 'flex';
+                } else {
+                    alert("No se pudo agregar extra");
+                }
             };
         });
     }
@@ -877,6 +925,20 @@
             const cartIndex = cart.findIndex(i => i.productId === productId);
             if (cartIndex !== -1) {
                 cart[cartIndex].extras.push({ id: extraId, name: extraName, price: price });
+            } else {
+                // 极少数情况（强制产品未创建）兜底
+                const product = PRODUCTS.find(p => p.code === productId);
+                if (product) {
+                    cart.push({
+                        productId: product.code,
+                        name: getProductName(product),
+                        basePrice: product.basePrice,
+                        qty: 0,
+                        importType: 'imported',
+                        customType: '',
+                        extras: [{ id: extraId, name: extraName, price: price }]
+                    });
+                }
             }
         }
         document.getElementById('priceModal').style.display = 'none';
@@ -891,6 +953,11 @@
 
     window.removeExtraFromCart = function(itemIndex, extraIndex) {
         if (cart[itemIndex]) cart[itemIndex].extras.splice(extraIndex, 1);
+        // 如果该物品数量为0且没有加料且不是强制产品，可以从购物车移除（但强制产品保留也可）
+        const item = cart[itemIndex];
+        if (item && item.qty === 0 && item.extras.length === 0 && !shouldForceOptions(item.productId)) {
+            cart.splice(itemIndex, 1);
+        }
         updateAll();
     };
 
@@ -907,7 +974,7 @@
         
         for (let idx = 0; idx < cart.length; idx++) {
             const item = cart[idx];
-            if (item.qty === 0 && item.extras.length === 0) continue;
+            if (item.qty === 0 && item.extras.length === 0 && !shouldForceOptions(item.productId)) continue;
             const finalPrice = getProductFinalPrice(item.basePrice, item.customType);
             const itemTotal = finalPrice * item.qty;
             total += itemTotal;
@@ -942,7 +1009,7 @@
         container.innerHTML = itemsHtml;
         document.getElementById('cart-total-amount').innerHTML = `₡${total}`;
         
-        const hasItems = cart.some(i => i.qty > 0);
+        const hasItems = cart.some(i => i.qty > 0 || (i.extras.length > 0));
         document.getElementById('generateQRBtn').classList.toggle('disabled', !hasItems);
     }
 
@@ -962,7 +1029,7 @@
     }
 
     function generateSimpleQRContent() {
-        const validItems = cart.filter(i => i.qty > 0);
+        const validItems = cart.filter(i => i.qty > 0 || i.extras.length > 0);
         if (validItems.length === 0) return '';
         const parts = [];
         for (let item of validItems) {
@@ -994,7 +1061,7 @@
             return;
         }
         
-        const validItems = cart.filter(i => i.qty > 0);
+        const validItems = cart.filter(i => i.qty > 0 || i.extras.length > 0);
         if (validItems.length === 0) {
             alert(getText('emptyCart'));
             return;
