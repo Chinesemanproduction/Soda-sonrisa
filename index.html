@@ -1440,15 +1440,18 @@
     }
 
     function validatePhone() {
-        const phone = $('phoneInput').value.trim();
-        const error = $('phoneError');
-        if (phone && !/^\d{8}$/.test(phone)) {
-            error.classList.add('show');
-            return false;
-        }
-        error.classList.remove('show');
-        return true;
+    const phone = $('phoneInput').value.trim();
+    const error = $('phoneError');
+    
+    // 检查是否为8位纯数字
+    if (!/^\d{8}$/.test(phone)) {
+        error.classList.add('show');
+        return false;
     }
+    
+    error.classList.remove('show');
+    return true;
+}
 
     window.generateOrderQR = function() {
         if (!validatePhone()) {
