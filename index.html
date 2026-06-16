@@ -1038,7 +1038,7 @@
     };
 
     // ============================================================
-    // TRADUCCIONES (conOlor por defecto activo)
+    // TRADUCCIONES
     // ============================================================
     const I18N = {
         en: { shopName:"Soda Sonrisas", shopDesc:"📱 Scan QR to pay at counter", cartTitle:"My Order", totalLabel:"Total", generateBtn:"📱 Generate QR to Pay", modalTitle:"📱 Show this QR to cashier", closeBtn:"Close", emptyCart:"No items selected", itemsCount:n=>`${n} item${n!==1?'s':''}`, conOlor:"Con olor", sinOlor:"Sin olor", deLaCasa:"De la casa (+₡400)", normal:"Normal", priceTitle:"Enter price (min ₡1,000)", confirm:"Confirm", cancel:"Cancel", addExtraDisabled:"Please add a main dish first", phoneLabel:"📞 Contact phone *", phonePlaceholder:"8 digits", notesLabel:"📝 Notes / Special requests", alertTitle:"📢 Important Notice", alertMessage:"If you wish to add special ingredients, please mention them in NOTES.", phoneError:"Phone number must be 8 digits", noResults:"No products found", searchPlaceholder:"Search product...", addedToCart:"Added to cart", removedFromCart:"Removed from cart" },
@@ -1067,11 +1067,14 @@
             const id = product.code, simple = isSimple(id);
             const cartItem = State.cart.find(i => i.productId === id);
             const qty = cartItem?.qty || 0, inCart = qty > 0;
-            const importType = cartItem?.importType || 'local';     // POR DEFECTO "Con olor" (local)
-            const customType = cartItem?.customType || '';
+            // Para productos simples, siempre usamos 'local' (con olor)
+            const importType = simple ? 'local' : (cartItem?.importType || 'local');
+            const customType = simple ? '' : (cartItem?.customType || '');
             const displayPrice = getFinalPrice(product.basePrice, simple ? '' : customType);
             html += `<div class="menu-card ${inCart ? 'in-cart' : ''}" data-product-id="${id}"><div class="menu-header"><span class="menu-name">${escapeHtml(getName(product))}</span><span class="menu-price"><span class="currency">₡</span>${displayPrice}</span></div>`;
-            if (!simple) html += `<div class="options-row"><div class="option-group"><span class="option-label">🧅</span><button class="option-btn ${importType === 'local' ? 'active' : ''}" onclick="updateOption(${id}, 'import', 'local')">${t('conOlor')}</button><button class="option-btn ${importType === 'imported' ? 'active' : ''}" onclick="updateOption(${id}, 'import', 'imported')">${t('sinOlor')}</button></div><div class="option-group"><span class="option-label">⭐</span><button class="option-btn ${customType === '' ? 'active' : ''}" onclick="updateOption(${id}, 'custom', '')">${t('normal')}</button><button class="option-btn ${customType === 'type1' ? 'active' : ''}" onclick="updateOption(${id}, 'custom', 'type1')">${t('deLaCasa')}</button></div></div>`;
+            if (!simple) {
+                html += `<div class="options-row"><div class="option-group"><span class="option-label">🧅</span><button class="option-btn ${importType === 'local' ? 'active' : ''}" onclick="updateOption(${id}, 'import', 'local')">${t('conOlor')}</button><button class="option-btn ${importType === 'imported' ? 'active' : ''}" onclick="updateOption(${id}, 'import', 'imported')">${t('sinOlor')}</button></div><div class="option-group"><span class="option-label">⭐</span><button class="option-btn ${customType === '' ? 'active' : ''}" onclick="updateOption(${id}, 'custom', '')">${t('normal')}</button><button class="option-btn ${customType === 'type1' ? 'active' : ''}" onclick="updateOption(${id}, 'custom', 'type1')">${t('deLaCasa')}</button></div></div>`;
+            }
             html += `<div class="qty-control"><button class="qty-btn minus" onclick="updateQty(${id}, -1)" ${qty===0?'disabled':''}>−</button><span class="qty-number ${qty>0?'pulse':''}" id="qty-${id}">${qty}</span><button class="qty-btn" onclick="updateQty(${id}, 1)">+</button></div>`;
             if (!simple && inCart) html += `<div class="extras-section"><div class="extras-title">➕ ${State.lang==='en'?'Add-ons':State.lang==='zh'?'加料':'Extras'}</div><div class="extra-buttons">${State.extras.map(extra => `<button class="extra-btn" onclick="addExtra(${id}, '${extra.id}', '${escapeHtml(getName(extra))}')"><span>${escapeHtml(getName(extra))}</span><span class="extra-price">₡${extra.defaultPrice}</span></button>`).join('')}</div></div>`;
             html += '</div>';
@@ -1088,7 +1091,11 @@
             const finalPrice = getFinalPrice(item.basePrice, simple ? '' : item.customType);
             const itemTotal = finalPrice * item.qty; total += itemTotal; totalQty += item.qty;
             let attrs = [];
-            if (!simple) { if (item.importType === 'local') attrs.push(t('conOlor')); if (item.customType === 'type1') attrs.push(t('deLaCasa')); }
+            if (!simple) { 
+                // Para productos simples, siempre mostramos "Con olor"
+                if (item.importType === 'local' || simple) attrs.push(t('conOlor')); 
+                if (item.customType === 'type1') attrs.push(t('deLaCasa')); 
+            }
             itemsHtml += `<div class="cart-item"><div><div class="cart-item-name">${escapeHtml(item.name)} × ${item.qty}</div>${attrs.length ? `<div class="cart-item-attrs">${attrs.join(' • ')}</div>` : ''}${item.extras.length ? `<div class="cart-item-extras">${item.extras.map((e,idx)=>`<div class="cart-item-extra"><span>↳ ${escapeHtml(e.name)}</span><span><span style="color: var(--primary); font-weight: 600;">₡${e.price}</span><button class="delete-extra" onclick="removeExtra(${State.cart.indexOf(item)}, ${idx})">✕</button></span></div>`).join('')}</div>` : ''}</div><div class="cart-item-price">₡${itemTotal}</div></div>`;
             for (const extra of item.extras) total += extra.price;
         }
@@ -1104,23 +1111,63 @@
     // ACCIONES
     // ============================================================
     window.updateQty = function(productId, delta) {
-        const product = State.products.find(p => p.code === productId); if (!product) return;
+        const product = State.products.find(p => p.code === productId); 
+        if (!product) return;
         const simple = isSimple(productId);
         let item = State.cart.find(i => i.productId === productId);
         if (delta > 0) {
-            if (!item) { item = { productId: product.code, name: getName(product), basePrice: product.basePrice, qty: 0, importType: 'local', customType: '', extras: [] }; if (simple) { item.importType = 'imported'; item.customType = ''; } State.cart.push(item); }
-            item.qty++; showToast(t('addedToCart'));
-        } else if (item) { item.qty--; if (item.qty <= 0) { item.qty = 0; item.extras = []; State.cart = State.cart.filter(i => i.productId !== productId); } showToast(t('removedFromCart')); }
-        renderMenu(); renderCart();
+            if (!item) {
+                // Para productos simples, siempre usamos 'local' (con olor)
+                item = { 
+                    productId: product.code, 
+                    name: getName(product), 
+                    basePrice: product.basePrice, 
+                    qty: 0, 
+                    importType: 'local',  // ✅ Por defecto "con olor"
+                    customType: '', 
+                    extras: [] 
+                };
+                // Los productos simples no tienen opciones, pero mantenemos 'local'
+                State.cart.push(item);
+            }
+            item.qty++;
+            showToast(t('addedToCart'));
+        } else if (item) { 
+            item.qty--; 
+            if (item.qty <= 0) { 
+                item.qty = 0; 
+                item.extras = []; 
+                State.cart = State.cart.filter(i => i.productId !== productId); 
+            } 
+            showToast(t('removedFromCart')); 
+        }
+        renderMenu(); 
+        renderCart();
     };
+
     window.updateOption = function(productId, type, value) {
         if (isSimple(productId)) return;
         let item = State.cart.find(i => i.productId === productId);
-        if (!item) { const product = State.products.find(p => p.code === productId); if (!product) return; item = { productId: product.code, name: getName(product), basePrice: product.basePrice, qty: 0, importType: 'local', customType: '', extras: [] }; State.cart.push(item); }
+        if (!item) { 
+            const product = State.products.find(p => p.code === productId); 
+            if (!product) return; 
+            item = { 
+                productId: product.code, 
+                name: getName(product), 
+                basePrice: product.basePrice, 
+                qty: 0, 
+                importType: 'local', 
+                customType: '', 
+                extras: [] 
+            }; 
+            State.cart.push(item); 
+        }
         if (type === 'import') item.importType = value;
         if (type === 'custom') item.customType = value;
-        renderMenu(); renderCart();
+        renderMenu(); 
+        renderCart();
     };
+
     window.addExtra = function(productId, extraId, extraName) {
         const item = State.cart.find(i => i.productId === productId);
         if (!item || item.qty === 0) { showToast(t('addExtraDisabled')); return; }
@@ -1132,58 +1179,187 @@
         $('priceModal').classList.add('show');
         $('priceInput').focus(); $('priceInput').select();
     };
+
     window.confirmPrice = function() {
         let price = parseInt($('priceInput').value);
         if (isNaN(price) || price < CONFIG.MIN_EXTRA_PRICE) price = CONFIG.MIN_EXTRA_PRICE;
-        if (State.pendingExtra) { const { productId, extraId, extraName } = State.pendingExtra; const item = State.cart.find(i => i.productId === productId); if (item) item.extras.push({ id: extraId, name: extraName, price }); }
-        $('priceModal').classList.remove('show'); State.pendingExtra = null; renderCart();
+        if (State.pendingExtra) { 
+            const { productId, extraId, extraName } = State.pendingExtra; 
+            const item = State.cart.find(i => i.productId === productId); 
+            if (item) item.extras.push({ id: extraId, name: extraName, price }); 
+        }
+        $('priceModal').classList.remove('show'); 
+        State.pendingExtra = null; 
+        renderCart();
     };
-    window.cancelPrice = function() { $('priceModal').classList.remove('show'); State.pendingExtra = null; };
-    window.removeExtra = function(itemIdx, extraIdx) { if (State.cart[itemIdx]) { State.cart[itemIdx].extras.splice(extraIdx, 1); if (State.cart[itemIdx].qty === 0 && State.cart[itemIdx].extras.length === 0) State.cart.splice(itemIdx, 1); renderMenu(); renderCart(); } };
-    window.toggleCart = function() { State.cartMinimized = !State.cartMinimized; $('cartFloating').classList.toggle('minimized', State.cartMinimized); };
-    function validatePhone() { const phone = $('phoneInput').value.trim(); const error = $('phoneError'); if (phone && !/^\d{8}$/.test(phone)) { error.classList.add('show'); return false; } error.classList.remove('show'); return true; }
+
+    window.cancelPrice = function() { 
+        $('priceModal').classList.remove('show'); 
+        State.pendingExtra = null; 
+    };
+
+    window.removeExtra = function(itemIdx, extraIdx) { 
+        if (State.cart[itemIdx]) { 
+            State.cart[itemIdx].extras.splice(extraIdx, 1); 
+            if (State.cart[itemIdx].qty === 0 && State.cart[itemIdx].extras.length === 0) 
+                State.cart.splice(itemIdx, 1); 
+            renderMenu(); 
+            renderCart(); 
+        } 
+    };
+
+    window.toggleCart = function() { 
+        State.cartMinimized = !State.cartMinimized; 
+        $('cartFloating').classList.toggle('minimized', State.cartMinimized); 
+    };
+
+    function validatePhone() { 
+        const phone = $('phoneInput').value.trim(); 
+        const error = $('phoneError'); 
+        if (phone && !/^\d{8}$/.test(phone)) { 
+            error.classList.add('show'); 
+            return false; 
+        } 
+        error.classList.remove('show'); 
+        return true; 
+    }
+
     function generateQRContent() {
         const validItems = State.cart.filter(i => i.qty > 0);
         if (!validItems.length) return '';
-        return validItems.map(item => { const simple = isSimple(item.productId); const attrCode = simple ? 0 : getAttrCode(item.importType, item.customType); let str = `${item.productId}|${item.qty}|${attrCode}`; if (item.extras?.length) str += '|' + item.extras.map(e => `${e.id}|${e.price}`).join('!'); return str; }).join(';');
+        return validItems.map(item => { 
+            const simple = isSimple(item.productId); 
+            // Para productos simples, siempre usamos attrCode = 0 (con olor por defecto)
+            const attrCode = simple ? 0 : getAttrCode(item.importType, item.customType); 
+            let str = `${item.productId}|${item.qty}|${attrCode}`; 
+            if (item.extras?.length) str += '|' + item.extras.map(e => `${e.id}|${e.price}`).join('!'); 
+            return str; 
+        }).join(';');
     }
+
     window.generateOrderQR = function() {
         if (!validatePhone()) { $('phoneInput').focus(); return; }
         const validItems = State.cart.filter(i => i.qty > 0);
         if (!validItems.length) { showToast(t('emptyCart')); return; }
         let total = 0;
-        for (const item of validItems) { const simple = isSimple(item.productId); total += getFinalPrice(item.basePrice, simple ? '' : item.customType) * item.qty; total += item.extras?.reduce((s, e) => s + e.price, 0) || 0; }
+        for (const item of validItems) { 
+            const simple = isSimple(item.productId); 
+            total += getFinalPrice(item.basePrice, simple ? '' : item.customType) * item.qty; 
+            total += item.extras?.reduce((s, e) => s + e.price, 0) || 0; 
+        }
         const phone = $('phoneInput').value.trim(), notes = $('notesInput').value.trim();
-        let qrContent = generateQRContent(); if (phone) qrContent += `|${phone}`; if (notes) qrContent += `|${notes.replace(/\|/g, ' ')}`;
-        const qrDiv = $('qr-code'); qrDiv.innerHTML = '';
-        try { new QRCode(qrDiv, { text: qrContent, width: 220, height: 220, correctLevel: QRCode.CorrectLevel.M }); } catch(e) { qrDiv.innerHTML = '<div style="color: var(--danger); font-weight: 600;">Error generando QR</div>'; }
+        let qrContent = generateQRContent(); 
+        if (phone) qrContent += `|${phone}`; 
+        if (notes) qrContent += `|${notes.replace(/\|/g, ' ')}`;
+        const qrDiv = $('qr-code'); 
+        qrDiv.innerHTML = '';
+        try { 
+            new QRCode(qrDiv, { text: qrContent, width: 220, height: 220, correctLevel: QRCode.CorrectLevel.M }); 
+        } catch(e) { 
+            qrDiv.innerHTML = '<div style="color: var(--danger); font-weight: 600;">Error generando QR</div>'; 
+        }
         const itemCount = validItems.reduce((s, i) => s + i.qty, 0);
         $('qr-order-summary').innerHTML = `<div><strong>${itemCount} producto(s)</strong></div><div>Total: <strong>₡${total.toLocaleString()}</strong></div>${phone ? `<div>📞 Tel: ${escapeHtml(phone)}</div>` : ''}${notes ? `<div>📝 Notas: ${escapeHtml(notes.substring(0, 50))}${notes.length > 50 ? '...' : ''}</div>` : ''}`;
-        $('modal-title').textContent = t('modalTitle'); $('close-btn').textContent = t('closeBtn'); $('qrModal').classList.add('show');
+        $('modal-title').textContent = t('modalTitle'); 
+        $('close-btn').textContent = t('closeBtn'); 
+        $('qrModal').classList.add('show');
     };
-    window.closeQRModal = function() { $('qrModal').classList.remove('show'); };
-    window.closeAlert = function() { $('alertModal').classList.remove('show'); };
-    function setLanguage(lang) { State.lang = lang; $('shop-name').textContent = I18N[lang].shopName; $('shop-desc').textContent = I18N[lang].shopDesc; $('cart-title').textContent = I18N[lang].cartTitle; $('total-label').textContent = I18N[lang].totalLabel; $('generateQRBtn').innerHTML = I18N[lang].generateBtn; $('phone-label').innerHTML = I18N[lang].phoneLabel; $('phoneInput').placeholder = I18N[lang].phonePlaceholder; $('notes-label').innerHTML = I18N[lang].notesLabel; $('searchInput').placeholder = t('searchPlaceholder'); $('alertTitle').textContent = I18N[lang].alertTitle; $('alertMessage').textContent = I18N[lang].alertMessage; for (const item of State.cart) { const product = State.products.find(p => p.code === item.productId); if (product) item.name = getName(product); for (const extra of item.extras) { const extraDef = State.extras.find(e => e.id === extra.id); if (extraDef) extra.name = getName(extraDef); } } renderMenu(); renderCart(); }
-    function handleSearch(e) { const term = e.target.value.toLowerCase().trim(); $('searchClear').classList.toggle('show', term.length > 0); State.filteredProducts = term ? State.products.filter(p => p.active !== false && (p.name_es?.toLowerCase().includes(term) || p.name_en?.toLowerCase().includes(term) || p.name_zh?.toLowerCase().includes(term))) : State.products.filter(p => p.active !== false); renderMenu(); }
-    window.clearSearch = function() { $('searchInput').value = ''; $('searchClear').classList.remove('show'); State.filteredProducts = State.products.filter(p => p.active !== false); renderMenu(); $('searchInput').focus(); };
-    function getMenuUrl() { return `${CONFIG.SUPABASE_URL}/storage/v1/object/public/${CONFIG.BUCKET_NAME}/${CONFIG.FILE_PATH}?t=${Date.now()}`; }
+
+    window.closeQRModal = function() { 
+        $('qrModal').classList.remove('show'); 
+    };
+
+    window.closeAlert = function() { 
+        $('alertModal').classList.remove('show'); 
+    };
+
+    function setLanguage(lang) { 
+        State.lang = lang; 
+        $('shop-name').textContent = I18N[lang].shopName; 
+        $('shop-desc').textContent = I18N[lang].shopDesc; 
+        $('cart-title').textContent = I18N[lang].cartTitle; 
+        $('total-label').textContent = I18N[lang].totalLabel; 
+        $('generateQRBtn').innerHTML = I18N[lang].generateBtn; 
+        $('phone-label').innerHTML = I18N[lang].phoneLabel; 
+        $('phoneInput').placeholder = I18N[lang].phonePlaceholder; 
+        $('notes-label').innerHTML = I18N[lang].notesLabel; 
+        $('searchInput').placeholder = t('searchPlaceholder'); 
+        $('alertTitle').textContent = I18N[lang].alertTitle; 
+        $('alertMessage').textContent = I18N[lang].alertMessage; 
+        for (const item of State.cart) { 
+            const product = State.products.find(p => p.code === item.productId); 
+            if (product) item.name = getName(product); 
+            for (const extra of item.extras) { 
+                const extraDef = State.extras.find(e => e.id === extra.id); 
+                if (extraDef) extra.name = getName(extraDef); 
+            } 
+        } 
+        renderMenu(); 
+        renderCart(); 
+    }
+
+    function handleSearch(e) { 
+        const term = e.target.value.toLowerCase().trim(); 
+        $('searchClear').classList.toggle('show', term.length > 0); 
+        State.filteredProducts = term ? 
+            State.products.filter(p => p.active !== false && (p.name_es?.toLowerCase().includes(term) || p.name_en?.toLowerCase().includes(term) || p.name_zh?.toLowerCase().includes(term))) : 
+            State.products.filter(p => p.active !== false); 
+        renderMenu(); 
+    }
+
+    window.clearSearch = function() { 
+        $('searchInput').value = ''; 
+        $('searchClear').classList.remove('show'); 
+        State.filteredProducts = State.products.filter(p => p.active !== false); 
+        renderMenu(); 
+        $('searchInput').focus(); 
+    };
+
+    function getMenuUrl() { 
+        return `${CONFIG.SUPABASE_URL}/storage/v1/object/public/${CONFIG.BUCKET_NAME}/${CONFIG.FILE_PATH}?t=${Date.now()}`; 
+    }
+
     async function loadMenuData() {
         try {
             const response = await fetch(getMenuUrl(), { cache: 'no-cache', headers: { 'Cache-Control': 'no-cache' } });
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             const data = await response.json();
-            State.products = data.products || []; State.extras = data.extras || [];
+            State.products = data.products || []; 
+            State.extras = data.extras || [];
             State.filteredProducts = State.products.filter(p => p.active !== false);
-            $('loadingOverlay').classList.add('hidden'); $('mainContent').style.display = 'block';
-            renderMenu(); renderCart();
-            if (!sessionStorage.getItem('alertShown')) { $('alertModal').classList.add('show'); sessionStorage.setItem('alertShown', 'true'); }
-        } catch (error) { $('loadingOverlay').innerHTML = `<div class="loading-error">❌ Error: ${escapeHtml(error.message)}<br><br><button class="retry-btn" onclick="location.reload()">Reintentar</button></div>`; }
+            $('loadingOverlay').classList.add('hidden'); 
+            $('mainContent').style.display = 'block';
+            renderMenu(); 
+            renderCart();
+            if (!sessionStorage.getItem('alertShown')) { 
+                $('alertModal').classList.add('show'); 
+                sessionStorage.setItem('alertShown', 'true'); 
+            }
+        } catch (error) { 
+            $('loadingOverlay').innerHTML = `<div class="loading-error">❌ Error: ${escapeHtml(error.message)}<br><br><button class="retry-btn" onclick="location.reload()">Reintentar</button></div>`; 
+        }
     }
+
     document.addEventListener('DOMContentLoaded', () => {
-        document.querySelectorAll('.lang-btn').forEach(btn => btn.addEventListener('click', () => { const lang = btn.dataset.lang; setLanguage(lang); document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }));
-        $('searchInput').addEventListener('input', handleSearch); $('phoneInput').addEventListener('input', validatePhone);
-        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { $('qrModal').classList.remove('show'); $('priceModal').classList.remove('show'); $('alertModal').classList.remove('show'); } if (e.key === 'Enter' && $('priceModal').classList.contains('show')) confirmPrice(); });
-        document.querySelectorAll('.modal-overlay').forEach(modal => modal.addEventListener('click', (e) => { if (e.target === modal && modal.id !== 'alertModal') modal.classList.remove('show'); }));
+        document.querySelectorAll('.lang-btn').forEach(btn => btn.addEventListener('click', () => { 
+            const lang = btn.dataset.lang; 
+            setLanguage(lang); 
+            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active')); 
+            btn.classList.add('active'); 
+        }));
+        $('searchInput').addEventListener('input', handleSearch); 
+        $('phoneInput').addEventListener('input', validatePhone);
+        document.addEventListener('keydown', (e) => { 
+            if (e.key === 'Escape') { 
+                $('qrModal').classList.remove('show'); 
+                $('priceModal').classList.remove('show'); 
+                $('alertModal').classList.remove('show'); 
+            } 
+            if (e.key === 'Enter' && $('priceModal').classList.contains('show')) confirmPrice(); 
+        });
+        document.querySelectorAll('.modal-overlay').forEach(modal => modal.addEventListener('click', (e) => { 
+            if (e.target === modal && modal.id !== 'alertModal') modal.classList.remove('show'); 
+        }));
         loadMenuData();
     });
 </script>
