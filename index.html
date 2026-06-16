@@ -1444,7 +1444,7 @@
     const error = $('phoneError');
     
     // 检查是否为8位纯数字
-    if (!/^\d{8}$/.test(phone)) {
+   if (phone && !/^\\d{8}$/.test(phone)) {
         error.classList.add('show');
         return false;
     }
