@@ -1016,7 +1016,7 @@
 
 <script>
     // ============================================================
-    // CONFIGURACIÓN
+    // CONFIGURACIÓN Y ESTADO
     // ============================================================
     const CONFIG = {
         SUPABASE_URL: 'https://lqgwqqbtzjxplcvdxuqs.supabase.co',
@@ -1027,9 +1027,6 @@
         PHONE_LENGTH: 8
     };
 
-    // ============================================================
-    // ESTADO
-    // ============================================================
     const State = {
         products: [],
         extras: [],
@@ -1037,638 +1034,156 @@
         lang: 'es',
         filteredProducts: [],
         pendingExtra: null,
-        cartMinimized: false,
-        isLoading: false
+        cartMinimized: false
     };
 
     // ============================================================
-    // TRADUCCIONES
+    // TRADUCCIONES (conOlor por defecto activo)
     // ============================================================
     const I18N = {
-        en: {
-            shopName: "Soda Sonrisas", shopDesc: "📱 Scan QR to pay at counter",
-            cartTitle: "My Order", totalLabel: "Total",
-            generateBtn: "📱 Generate QR to Pay", modalTitle: "📱 Show this QR to cashier",
-            closeBtn: "Close", emptyCart: "No items selected",
-            itemsCount: n => `${n} item${n !== 1 ? 's' : ''}`,
-            conOlor: "Con olor", sinOlor: "Sin olor", deLaCasa: "De la casa (+₡400)", normal: "Normal",
-            priceTitle: "Enter price (min ₡1,000)", confirm: "Confirm", cancel: "Cancel",
-            addExtraDisabled: "Please add a main dish first",
-            phoneLabel: "📞 Contact phone *", phonePlaceholder: "8 digits",
-            notesLabel: "📝 Notes / Special requests",
-            alertTitle: "📢 Important Notice",
-            alertMessage: "If you wish to add special ingredients, please mention them in NOTES.",
-            phoneError: "Phone number must be 8 digits",
-            noResults: "No products found",
-            searchPlaceholder: "Search product...",
-            addedToCart: "Added to cart",
-            removedFromCart: "Removed from cart"
-        },
-        es: {
-            shopName: "Soda Sonrisas", shopDesc: "📱 Escanea el QR para pagar en caja",
-            cartTitle: "Mi pedido", totalLabel: "Total",
-            generateBtn: "📱 Generar QR para pagar", modalTitle: "📱 Muestra este QR en caja",
-            closeBtn: "Cerrar", emptyCart: "No hay productos seleccionados",
-            itemsCount: n => `${n} producto${n !== 1 ? 's' : ''}`,
-            conOlor: "Con olor", sinOlor: "Sin olor", deLaCasa: "De la casa (+₡400)", normal: "Normal",
-            priceTitle: "Ingrese precio (mín ₡1,000)", confirm: "Confirmar", cancel: "Cancelar",
-            addExtraDisabled: "Agregue un plato principal primero",
-            phoneLabel: "📞 Teléfono de contacto *", phonePlaceholder: "8 dígitos",
-            notesLabel: "📝 Observaciones / Notas",
-            alertTitle: "📢 Aviso importante",
-            alertMessage: "Si desea agregar ingredientes especiales, menciónelos en NOTAS.",
-            phoneError: "El teléfono debe tener 8 dígitos",
-            noResults: "No se encontraron productos",
-            searchPlaceholder: "Buscar producto...",
-            addedToCart: "Agregado al carrito",
-            removedFromCart: "Eliminado del carrito"
-        },
-        zh: {
-            shopName: "Soda Sonrisas", shopDesc: "📱 扫码到前台付款",
-            cartTitle: "已选菜品", totalLabel: "总计",
-            generateBtn: "📱 生成付款二维码", modalTitle: "📱 请出示此码到前台",
-            closeBtn: "关闭", emptyCart: "暂未选择菜品",
-            itemsCount: n => `${n} 个菜品`,
-            conOlor: "正常口味", sinOlor: "淡口味", deLaCasa: "招牌升级 (+₡400)", normal: "普通",
-            priceTitle: "输入价格 (最低 ₡1,000)", confirm: "确认", cancel: "取消",
-            addExtraDisabled: "请先添加主菜",
-            phoneLabel: "📞 联系电话 *", phonePlaceholder: "8位数字",
-            notesLabel: "📝 备注 / 特殊要求",
-            alertTitle: "📢 重要提示",
-            alertMessage: "如需添加特殊配料，请在备注中说明。",
-            phoneError: "电话号码必须为8位数字",
-            noResults: "未找到产品",
-            searchPlaceholder: "搜索产品...",
-            addedToCart: "已加入购物车",
-            removedFromCart: "已从购物车移除"
-        }
+        en: { shopName:"Soda Sonrisas", shopDesc:"📱 Scan QR to pay at counter", cartTitle:"My Order", totalLabel:"Total", generateBtn:"📱 Generate QR to Pay", modalTitle:"📱 Show this QR to cashier", closeBtn:"Close", emptyCart:"No items selected", itemsCount:n=>`${n} item${n!==1?'s':''}`, conOlor:"Con olor", sinOlor:"Sin olor", deLaCasa:"De la casa (+₡400)", normal:"Normal", priceTitle:"Enter price (min ₡1,000)", confirm:"Confirm", cancel:"Cancel", addExtraDisabled:"Please add a main dish first", phoneLabel:"📞 Contact phone *", phonePlaceholder:"8 digits", notesLabel:"📝 Notes / Special requests", alertTitle:"📢 Important Notice", alertMessage:"If you wish to add special ingredients, please mention them in NOTES.", phoneError:"Phone number must be 8 digits", noResults:"No products found", searchPlaceholder:"Search product...", addedToCart:"Added to cart", removedFromCart:"Removed from cart" },
+        es: { shopName:"Soda Sonrisas", shopDesc:"📱 Escanea el QR para pagar en caja", cartTitle:"Mi pedido", totalLabel:"Total", generateBtn:"📱 Generar QR para pagar", modalTitle:"📱 Muestra este QR en caja", closeBtn:"Cerrar", emptyCart:"No hay productos seleccionados", itemsCount:n=>`${n} producto${n!==1?'s':''}`, conOlor:"Con olor", sinOlor:"Sin olor", deLaCasa:"De la casa (+₡400)", normal:"Normal", priceTitle:"Ingrese precio (mín ₡1,000)", confirm:"Confirmar", cancel:"Cancelar", addExtraDisabled:"Agregue un plato principal primero", phoneLabel:"📞 Teléfono de contacto *", phonePlaceholder:"8 dígitos", notesLabel:"📝 Observaciones / Notas", alertTitle:"📢 Aviso importante", alertMessage:"Si desea agregar ingredientes especiales, menciónelos en NOTAS.", phoneError:"El teléfono debe tener 8 dígitos", noResults:"No se encontraron productos", searchPlaceholder:"Buscar producto...", addedToCart:"Agregado al carrito", removedFromCart:"Eliminado del carrito" },
+        zh: { shopName:"Soda Sonrisas", shopDesc:"📱 扫码到前台付款", cartTitle:"已选菜品", totalLabel:"总计", generateBtn:"📱 生成付款二维码", modalTitle:"📱 请出示此码到前台", closeBtn:"关闭", emptyCart:"暂未选择菜品", itemsCount:n=>`${n} 个菜品`, conOlor:"正常口味", sinOlor:"淡口味", deLaCasa:"招牌升级 (+₡400)", normal:"普通", priceTitle:"输入价格 (最低 ₡1,000)", confirm:"确认", cancel:"取消", addExtraDisabled:"请先添加主菜", phoneLabel:"📞 联系电话 *", phonePlaceholder:"8位数字", notesLabel:"📝 备注 / 特殊要求", alertTitle:"📢 重要提示", alertMessage:"如需添加特殊配料，请在备注中说明。", phoneError:"电话号码必须为8位数字", noResults:"未找到产品", searchPlaceholder:"搜索产品...", addedToCart:"已加入购物车", removedFromCart:"已从购物车移除" }
     };
 
-    function t(key, ...args) {
-        const val = I18N[State.lang][key];
-        return typeof val === 'function' ? val(...args) : val;
-    }
-
-    // ============================================================
-    // UTILIDADES
-    // ============================================================
+    function t(key, ...args) { const val = I18N[State.lang][key]; return typeof val === 'function' ? val(...args) : val; }
     const $ = id => document.getElementById(id);
     const escapeHtml = str => str?.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])) || '';
     const isSimple = code => CONFIG.SIMPLE_CODES.has(code);
-    const getName = (item, type = 'product') => {
-        if (type === 'product') {
-            return State.lang === 'en' ? item.name_en : State.lang === 'zh' ? item.name_zh : item.name_es;
-        }
-        return State.lang === 'en' ? item.name_en : State.lang === 'zh' ? item.name_zh : item.name_es;
-    };
+    const getName = (item, type = 'product') => State.lang === 'en' ? item.name_en : State.lang === 'zh' ? item.name_zh : item.name_es;
     const getFinalPrice = (base, customType) => customType === 'type1' ? base + 400 : base;
-    const getAttrCode = (importType, customType) => {
-        let code = 0;
-        if (importType === 'local') code += 1;
-        if (customType === 'type1') code += 2;
-        return code;
-    };
-
-    function showToast(msg, duration = 2000) {
-        const toast = $('toast');
-        toast.textContent = msg;
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), duration);
-    }
+    const getAttrCode = (importType, customType) => (importType === 'local' ? 1 : 0) + (customType === 'type1' ? 2 : 0);
+    function showToast(msg, duration=2000) { const toast = $('toast'); toast.textContent = msg; toast.classList.add('show'); setTimeout(()=>toast.classList.remove('show'), duration); }
 
     // ============================================================
-    // RENDERIZADO (Optimizado: solo actualiza lo necesario)
+    // RENDERIZADO
     // ============================================================
     function renderMenu() {
         const container = $('menu-container');
-        if (State.filteredProducts.length === 0) {
-            container.innerHTML = `
-                <div class="no-results">
-                    <div class="no-results-icon">🔍</div>
-                    <div style="font-weight: 600; color: var(--text);">${t('noResults')}</div>
-                </div>`;
-            return;
-        }
-
+        if (State.filteredProducts.length === 0) { container.innerHTML = `<div class="no-results"><div class="no-results-icon">🔍</div><div>${t('noResults')}</div></div>`; return; }
         const categoryTitle = State.lang === 'en' ? 'Main Dishes' : State.lang === 'zh' ? '主菜' : 'Platos Principales';
-        
         let html = `<div class="category">${categoryTitle}<span class="category-count">${State.filteredProducts.length}</span></div>`;
-        
         for (const product of State.filteredProducts) {
-            const id = product.code;
-            const simple = isSimple(id);
+            const id = product.code, simple = isSimple(id);
             const cartItem = State.cart.find(i => i.productId === id);
-            const qty = cartItem?.qty || 0;
-            const inCart = qty > 0;
-            const importType = cartItem?.importType || 'imported';
+            const qty = cartItem?.qty || 0, inCart = qty > 0;
+            const importType = cartItem?.importType || 'local';     // POR DEFECTO "Con olor" (local)
             const customType = cartItem?.customType || '';
             const displayPrice = getFinalPrice(product.basePrice, simple ? '' : customType);
-            
-            html += `
-                <div class="menu-card ${inCart ? 'in-cart' : ''}" data-product-id="${id}">
-                    <div class="menu-header">
-                        <span class="menu-name">${escapeHtml(getName(product))}</span>
-                        <span class="menu-price"><span class="currency">₡</span>${displayPrice}</span>
-                    </div>
-            `;
-            
-            if (!simple) {
-                html += `
-                    <div class="options-row">
-                        <div class="option-group">
-                            <span class="option-label">🧅</span>
-                            <button class="option-btn ${importType === 'local' ? 'active' : ''}" 
-                                onclick="updateOption(${id}, 'import', 'local')">${t('conOlor')}</button>
-                            <button class="option-btn ${importType === 'imported' ? 'active' : ''}" 
-                                onclick="updateOption(${id}, 'import', 'imported')">${t('sinOlor')}</button>
-                        </div>
-                        <div class="option-group">
-                            <span class="option-label">⭐</span>
-                            <button class="option-btn ${customType === '' ? 'active' : ''}" 
-                                onclick="updateOption(${id}, 'custom', '')">${t('normal')}</button>
-                            <button class="option-btn ${customType === 'type1' ? 'active' : ''}" 
-                                onclick="updateOption(${id}, 'custom', 'type1')">${t('deLaCasa')}</button>
-                        </div>
-                    </div>
-                `;
-            }
-            
-            html += `
-                <div class="qty-control">
-                    <button class="qty-btn minus" onclick="updateQty(${id}, -1)" ${qty === 0 ? 'disabled' : ''}>−</button>
-                    <span class="qty-number ${qty > 0 ? 'pulse' : ''}" id="qty-${id}">${qty}</span>
-                    <button class="qty-btn" onclick="updateQty(${id}, 1)">+</button>
-                </div>
-            `;
-            
-            if (!simple && inCart) {
-                html += `
-                    <div class="extras-section">
-                        <div class="extras-title">➕ ${State.lang === 'en' ? 'Add-ons' : State.lang === 'zh' ? '加料' : 'Extras'}</div>
-                        <div class="extra-buttons">
-                            ${State.extras.map(extra => `
-                                <button class="extra-btn" onclick="addExtra(${id}, '${extra.id}', '${escapeHtml(getName(extra))}')">
-                                    <span>${escapeHtml(getName(extra))}</span>
-                                    <span class="extra-price">₡${extra.defaultPrice}</span>
-                                </button>
-                            `).join('')}
-                        </div>
-                    </div>
-                `;
-            }
-            
+            html += `<div class="menu-card ${inCart ? 'in-cart' : ''}" data-product-id="${id}"><div class="menu-header"><span class="menu-name">${escapeHtml(getName(product))}</span><span class="menu-price"><span class="currency">₡</span>${displayPrice}</span></div>`;
+            if (!simple) html += `<div class="options-row"><div class="option-group"><span class="option-label">🧅</span><button class="option-btn ${importType === 'local' ? 'active' : ''}" onclick="updateOption(${id}, 'import', 'local')">${t('conOlor')}</button><button class="option-btn ${importType === 'imported' ? 'active' : ''}" onclick="updateOption(${id}, 'import', 'imported')">${t('sinOlor')}</button></div><div class="option-group"><span class="option-label">⭐</span><button class="option-btn ${customType === '' ? 'active' : ''}" onclick="updateOption(${id}, 'custom', '')">${t('normal')}</button><button class="option-btn ${customType === 'type1' ? 'active' : ''}" onclick="updateOption(${id}, 'custom', 'type1')">${t('deLaCasa')}</button></div></div>`;
+            html += `<div class="qty-control"><button class="qty-btn minus" onclick="updateQty(${id}, -1)" ${qty===0?'disabled':''}>−</button><span class="qty-number ${qty>0?'pulse':''}" id="qty-${id}">${qty}</span><button class="qty-btn" onclick="updateQty(${id}, 1)">+</button></div>`;
+            if (!simple && inCart) html += `<div class="extras-section"><div class="extras-title">➕ ${State.lang==='en'?'Add-ons':State.lang==='zh'?'加料':'Extras'}</div><div class="extra-buttons">${State.extras.map(extra => `<button class="extra-btn" onclick="addExtra(${id}, '${extra.id}', '${escapeHtml(getName(extra))}')"><span>${escapeHtml(getName(extra))}</span><span class="extra-price">₡${extra.defaultPrice}</span></button>`).join('')}</div></div>`;
             html += '</div>';
         }
-        
         container.innerHTML = html;
-        
-        // Remover clase pulse después de animación
-        setTimeout(() => {
-            document.querySelectorAll('.qty-number.pulse').forEach(el => el.classList.remove('pulse'));
-        }, 300);
+        setTimeout(()=>document.querySelectorAll('.qty-number.pulse').forEach(el=>el.classList.remove('pulse')),300);
     }
 
     function renderCart() {
-        const container = $('cart-items-list');
-        let total = 0;
-        let itemsHtml = '';
-        let totalQty = 0;
-        
+        const container = $('cart-items-list'); let total = 0, itemsHtml = '', totalQty = 0;
         for (const item of State.cart) {
             if (item.qty === 0 && item.extras.length === 0) continue;
-            
             const simple = isSimple(item.productId);
             const finalPrice = getFinalPrice(item.basePrice, simple ? '' : item.customType);
-            const itemTotal = finalPrice * item.qty;
-            total += itemTotal;
-            totalQty += item.qty;
-            
+            const itemTotal = finalPrice * item.qty; total += itemTotal; totalQty += item.qty;
             let attrs = [];
-            if (!simple) {
-                if (item.importType === 'local') attrs.push(t('conOlor'));
-                if (item.customType === 'type1') attrs.push(t('deLaCasa'));
-            }
-            
-            itemsHtml += `
-                <div class="cart-item">
-                    <div>
-                        <div class="cart-item-name">${escapeHtml(item.name)} × ${item.qty}</div>
-                        ${attrs.length ? `<div class="cart-item-attrs">${attrs.join(' • ')}</div>` : ''}
-                        ${item.extras.length ? `<div class="cart-item-extras">
-                            ${item.extras.map((e, idx) => `
-                                <div class="cart-item-extra">
-                                    <span>↳ ${escapeHtml(e.name)}</span>
-                                    <span>
-                                        <span style="color: var(--primary); font-weight: 600;">₡${e.price}</span>
-                                        <button class="delete-extra" onclick="removeExtra(${State.cart.indexOf(item)}, ${idx})">✕</button>
-                                    </span>
-                                </div>
-                            `).join('')}
-                        </div>` : ''}
-                    </div>
-                    <div class="cart-item-price">₡${itemTotal}</div>
-                </div>
-            `;
-            
-            for (const extra of item.extras) {
-                total += extra.price;
-            }
+            if (!simple) { if (item.importType === 'local') attrs.push(t('conOlor')); if (item.customType === 'type1') attrs.push(t('deLaCasa')); }
+            itemsHtml += `<div class="cart-item"><div><div class="cart-item-name">${escapeHtml(item.name)} × ${item.qty}</div>${attrs.length ? `<div class="cart-item-attrs">${attrs.join(' • ')}</div>` : ''}${item.extras.length ? `<div class="cart-item-extras">${item.extras.map((e,idx)=>`<div class="cart-item-extra"><span>↳ ${escapeHtml(e.name)}</span><span><span style="color: var(--primary); font-weight: 600;">₡${e.price}</span><button class="delete-extra" onclick="removeExtra(${State.cart.indexOf(item)}, ${idx})">✕</button></span></div>`).join('')}</div>` : ''}</div><div class="cart-item-price">₡${itemTotal}</div></div>`;
+            for (const extra of item.extras) total += extra.price;
         }
-        
-        if (!itemsHtml) {
-            itemsHtml = `<div class="empty-cart">${t('emptyCart')}</div>`;
-        }
-        
+        if (!itemsHtml) itemsHtml = `<div class="empty-cart">${t('emptyCart')}</div>`;
         container.innerHTML = itemsHtml;
         $('cart-total-amount').textContent = `₡${total.toLocaleString()}`;
         $('cart-badge').textContent = totalQty;
         $('generateQRBtn').disabled = totalQty === 0;
-        
-        // Actualizar título con cantidad
         $('cart-title').textContent = t('cartTitle');
     }
 
     // ============================================================
-    // ACCIONES DEL CARRITO
+    // ACCIONES
     // ============================================================
     window.updateQty = function(productId, delta) {
-        const product = State.products.find(p => p.code === productId);
-        if (!product) return;
-        
+        const product = State.products.find(p => p.code === productId); if (!product) return;
         const simple = isSimple(productId);
         let item = State.cart.find(i => i.productId === productId);
-        
         if (delta > 0) {
-            if (!item) {
-                item = {
-                    productId: product.code,
-                    name: getName(product),
-                    basePrice: product.basePrice,
-                    qty: 0,
-                    importType: 'imported',
-                    customType: '',
-                    extras: []
-                };
-                if (simple) {
-                    item.importType = 'imported';
-                    item.customType = '';
-                }
-                State.cart.push(item);
-            }
-            item.qty++;
-            showToast(t('addedToCart'));
-        } else {
-            if (item) {
-                item.qty--;
-                if (item.qty <= 0) {
-                    item.qty = 0;
-                    item.extras = []; // Limpiar extras al quitar producto
-                    // Remover item si no tiene extras
-                    if (item.extras.length === 0) {
-                        State.cart = State.cart.filter(i => i.productId !== productId);
-                    }
-                    showToast(t('removedFromCart'));
-                }
-            }
-        }
-        
-        renderMenu();
-        renderCart();
+            if (!item) { item = { productId: product.code, name: getName(product), basePrice: product.basePrice, qty: 0, importType: 'local', customType: '', extras: [] }; if (simple) { item.importType = 'imported'; item.customType = ''; } State.cart.push(item); }
+            item.qty++; showToast(t('addedToCart'));
+        } else if (item) { item.qty--; if (item.qty <= 0) { item.qty = 0; item.extras = []; State.cart = State.cart.filter(i => i.productId !== productId); } showToast(t('removedFromCart')); }
+        renderMenu(); renderCart();
     };
-
     window.updateOption = function(productId, type, value) {
         if (isSimple(productId)) return;
-        
         let item = State.cart.find(i => i.productId === productId);
-        if (!item) {
-            const product = State.products.find(p => p.code === productId);
-            if (!product) return;
-            item = {
-                productId: product.code,
-                name: getName(product),
-                basePrice: product.basePrice,
-                qty: 0,
-                importType: 'imported',
-                customType: '',
-                extras: []
-            };
-            State.cart.push(item);
-        }
-        
+        if (!item) { const product = State.products.find(p => p.code === productId); if (!product) return; item = { productId: product.code, name: getName(product), basePrice: product.basePrice, qty: 0, importType: 'local', customType: '', extras: [] }; State.cart.push(item); }
         if (type === 'import') item.importType = value;
         if (type === 'custom') item.customType = value;
-        
-        renderMenu();
-        renderCart();
+        renderMenu(); renderCart();
     };
-
     window.addExtra = function(productId, extraId, extraName) {
         const item = State.cart.find(i => i.productId === productId);
-        if (!item || item.qty === 0) {
-            showToast(t('addExtraDisabled'));
-            return;
-        }
-        
+        if (!item || item.qty === 0) { showToast(t('addExtraDisabled')); return; }
         const extraDef = State.extras.find(e => e.id === extraId);
         const defaultPrice = extraDef?.defaultPrice || 1000;
-        
         State.pendingExtra = { productId, extraId, extraName, defaultPrice };
         $('priceModalTitle').textContent = t('priceTitle');
         $('priceInput').value = defaultPrice;
         $('priceModal').classList.add('show');
-        $('priceInput').focus();
-        $('priceInput').select();
+        $('priceInput').focus(); $('priceInput').select();
     };
-
     window.confirmPrice = function() {
         let price = parseInt($('priceInput').value);
-        if (isNaN(price) || price < CONFIG.MIN_EXTRA_PRICE) {
-            price = CONFIG.MIN_EXTRA_PRICE;
-        }
-        
-        if (State.pendingExtra) {
-            const { productId, extraId, extraName } = State.pendingExtra;
-            const item = State.cart.find(i => i.productId === productId);
-            if (item) {
-                item.extras.push({ id: extraId, name: extraName, price });
-            }
-        }
-        
-        $('priceModal').classList.remove('show');
-        State.pendingExtra = null;
-        renderCart();
+        if (isNaN(price) || price < CONFIG.MIN_EXTRA_PRICE) price = CONFIG.MIN_EXTRA_PRICE;
+        if (State.pendingExtra) { const { productId, extraId, extraName } = State.pendingExtra; const item = State.cart.find(i => i.productId === productId); if (item) item.extras.push({ id: extraId, name: extraName, price }); }
+        $('priceModal').classList.remove('show'); State.pendingExtra = null; renderCart();
     };
-
-    window.cancelPrice = function() {
-        $('priceModal').classList.remove('show');
-        State.pendingExtra = null;
-    };
-
-    window.removeExtra = function(itemIdx, extraIdx) {
-        if (State.cart[itemIdx]) {
-            State.cart[itemIdx].extras.splice(extraIdx, 1);
-            // Limpiar item si quedó vacío
-            if (State.cart[itemIdx].qty === 0 && State.cart[itemIdx].extras.length === 0) {
-                State.cart.splice(itemIdx, 1);
-            }
-            renderMenu();
-            renderCart();
-        }
-    };
-
-    window.toggleCart = function() {
-        State.cartMinimized = !State.cartMinimized;
-        $('cartFloating').classList.toggle('minimized', State.cartMinimized);
-    };
-
-    // ============================================================
-    // QR Y VALIDACIÓN
-    // ============================================================
+    window.cancelPrice = function() { $('priceModal').classList.remove('show'); State.pendingExtra = null; };
+    window.removeExtra = function(itemIdx, extraIdx) { if (State.cart[itemIdx]) { State.cart[itemIdx].extras.splice(extraIdx, 1); if (State.cart[itemIdx].qty === 0 && State.cart[itemIdx].extras.length === 0) State.cart.splice(itemIdx, 1); renderMenu(); renderCart(); } };
+    window.toggleCart = function() { State.cartMinimized = !State.cartMinimized; $('cartFloating').classList.toggle('minimized', State.cartMinimized); };
+    function validatePhone() { const phone = $('phoneInput').value.trim(); const error = $('phoneError'); if (phone && !/^\d{8}$/.test(phone)) { error.classList.add('show'); return false; } error.classList.remove('show'); return true; }
     function generateQRContent() {
         const validItems = State.cart.filter(i => i.qty > 0);
         if (!validItems.length) return '';
-        
-        return validItems.map(item => {
-            const simple = isSimple(item.productId);
-            const attrCode = simple ? 0 : getAttrCode(item.importType, item.customType);
-            let str = `${item.productId}|${item.qty}|${attrCode}`;
-            if (item.extras?.length) {
-                str += '|' + item.extras.map(e => `${e.id}|${e.price}`).join('!');
-            }
-            return str;
-        }).join(';');
+        return validItems.map(item => { const simple = isSimple(item.productId); const attrCode = simple ? 0 : getAttrCode(item.importType, item.customType); let str = `${item.productId}|${item.qty}|${attrCode}`; if (item.extras?.length) str += '|' + item.extras.map(e => `${e.id}|${e.price}`).join('!'); return str; }).join(';');
     }
-
-    function validatePhone() {
-    const phone = $('phoneInput').value.trim();
-    const error = $('phoneError');
-    
-    // 检查是否为8位纯数字
-     if (!/^\d{8}$/.test(phone)) {
-        error.classList.add('show');
-        return false;
-    }
-    
-    error.classList.remove('show');
-    return true;
-}
-
     window.generateOrderQR = function() {
-        if (!validatePhone()) {
-            $('phoneInput').focus();
-            return;
-        }
-        
+        if (!validatePhone()) { $('phoneInput').focus(); return; }
         const validItems = State.cart.filter(i => i.qty > 0);
-        if (!validItems.length) {
-            showToast(t('emptyCart'));
-            return;
-        }
-        
+        if (!validItems.length) { showToast(t('emptyCart')); return; }
         let total = 0;
-        for (const item of validItems) {
-            const simple = isSimple(item.productId);
-            total += getFinalPrice(item.basePrice, simple ? '' : item.customType) * item.qty;
-            total += item.extras?.reduce((s, e) => s + e.price, 0) || 0;
-        }
-        
-        const phone = $('phoneInput').value.trim();
-        const notes = $('notesInput').value.trim();
-        
-        let qrContent = generateQRContent();
-        if (phone) qrContent += `|${phone}`;
-        if (notes) qrContent += `|${notes.replace(/\\|/g, ' ')}`;
-        
-        console.log("QR Content:", qrContent);
-        
-        const qrDiv = $('qr-code');
-        qrDiv.innerHTML = '';
-        
-        try {
-            new QRCode(qrDiv, { text: qrContent, width: 220, height: 220, correctLevel: QRCode.CorrectLevel.M });
-        } catch(e) {
-            qrDiv.innerHTML = '<div style="color: var(--danger); font-weight: 600;">Error generando QR</div>';
-        }
-        
+        for (const item of validItems) { const simple = isSimple(item.productId); total += getFinalPrice(item.basePrice, simple ? '' : item.customType) * item.qty; total += item.extras?.reduce((s, e) => s + e.price, 0) || 0; }
+        const phone = $('phoneInput').value.trim(), notes = $('notesInput').value.trim();
+        let qrContent = generateQRContent(); if (phone) qrContent += `|${phone}`; if (notes) qrContent += `|${notes.replace(/\|/g, ' ')}`;
+        const qrDiv = $('qr-code'); qrDiv.innerHTML = '';
+        try { new QRCode(qrDiv, { text: qrContent, width: 220, height: 220, correctLevel: QRCode.CorrectLevel.M }); } catch(e) { qrDiv.innerHTML = '<div style="color: var(--danger); font-weight: 600;">Error generando QR</div>'; }
         const itemCount = validItems.reduce((s, i) => s + i.qty, 0);
-        $('qr-order-summary').innerHTML = `
-            <div><strong>${itemCount} producto(s)</strong></div>
-            <div>Total: <strong>₡${total.toLocaleString()}</strong></div>
-            ${phone ? `<div>📞 Tel: ${escapeHtml(phone)}</div>` : ''}
-            ${notes ? `<div>📝 Notas: ${escapeHtml(notes.substring(0, 50))}${notes.length > 50 ? '...' : ''}</div>` : ''}
-        `;
-        
-        $('modal-title').textContent = t('modalTitle');
-        $('close-btn').textContent = t('closeBtn');
-        $('qrModal').classList.add('show');
+        $('qr-order-summary').innerHTML = `<div><strong>${itemCount} producto(s)</strong></div><div>Total: <strong>₡${total.toLocaleString()}</strong></div>${phone ? `<div>📞 Tel: ${escapeHtml(phone)}</div>` : ''}${notes ? `<div>📝 Notas: ${escapeHtml(notes.substring(0, 50))}${notes.length > 50 ? '...' : ''}</div>` : ''}`;
+        $('modal-title').textContent = t('modalTitle'); $('close-btn').textContent = t('closeBtn'); $('qrModal').classList.add('show');
     };
-
-    window.closeQRModal = function() {
-        $('qrModal').classList.remove('show');
-    };
-
-    window.closeAlert = function() {
-        $('alertModal').classList.remove('show');
-    };
-
-    // ============================================================
-    // IDIOMA
-    // ============================================================
-    function setLanguage(lang) {
-        State.lang = lang;
-        
-        $('shop-name').textContent = I18N[lang].shopName;
-        $('shop-desc').textContent = I18N[lang].shopDesc;
-        $('cart-title').textContent = I18N[lang].cartTitle;
-        $('total-label').textContent = I18N[lang].totalLabel;
-        $('generateQRBtn').innerHTML = I18N[lang].generateBtn;
-        $('phone-label').innerHTML = I18N[lang].phoneLabel;
-        $('phoneInput').placeholder = I18N[lang].phonePlaceholder;
-        $('notes-label').innerHTML = I18N[lang].notesLabel;
-        $('searchInput').placeholder = t('searchPlaceholder');
-        $('alertTitle').textContent = I18N[lang].alertTitle;
-        $('alertMessage').textContent = I18N[lang].alertMessage;
-        
-        // Actualizar nombres en carrito
-        for (const item of State.cart) {
-            const product = State.products.find(p => p.code === item.productId);
-            if (product) item.name = getName(product);
-            for (const extra of item.extras) {
-                const extraDef = State.extras.find(e => e.id === extra.id);
-                if (extraDef) extra.name = getName(extraDef);
-            }
-        }
-        
-        renderMenu();
-        renderCart();
-    }
-
-    // ============================================================
-    // BÚSQUEDA
-    // ============================================================
-    function handleSearch(e) {
-        const term = e.target.value.toLowerCase().trim();
-        $('searchClear').classList.toggle('show', term.length > 0);
-        
-        if (!term) {
-            State.filteredProducts = State.products.filter(p => p.active !== false);
-        } else {
-            State.filteredProducts = State.products.filter(p => 
-                p.active !== false && (
-                    p.name_es?.toLowerCase().includes(term) ||
-                    p.name_en?.toLowerCase().includes(term) ||
-                    p.name_zh?.toLowerCase().includes(term)
-                )
-            );
-        }
-        renderMenu();
-    }
-
-    window.clearSearch = function() {
-        $('searchInput').value = '';
-        $('searchClear').classList.remove('show');
-        State.filteredProducts = State.products.filter(p => p.active !== false);
-        renderMenu();
-        $('searchInput').focus();
-    };
-
-    // ============================================================
-    // CARGA DE DATOS
-    // ============================================================
-    function getMenuUrl() {
-        return `${CONFIG.SUPABASE_URL}/storage/v1/object/public/${CONFIG.BUCKET_NAME}/${CONFIG.FILE_PATH}?t=${Date.now()}`;
-    }
-
-    window.refreshMenu = async function() {
-        if (State.isLoading) return;
-        State.isLoading = true;
-        
-        const loading = $('loadingOverlay');
-        loading.classList.remove('hidden');
-        loading.innerHTML = '<div class="spinner"></div><div class="loading-text">Actualizando menú...</div>';
-        $('mainContent').style.display = 'none';
-        
-        await loadMenuData();
-        State.isLoading = false;
-    };
-
+    window.closeQRModal = function() { $('qrModal').classList.remove('show'); };
+    window.closeAlert = function() { $('alertModal').classList.remove('show'); };
+    function setLanguage(lang) { State.lang = lang; $('shop-name').textContent = I18N[lang].shopName; $('shop-desc').textContent = I18N[lang].shopDesc; $('cart-title').textContent = I18N[lang].cartTitle; $('total-label').textContent = I18N[lang].totalLabel; $('generateQRBtn').innerHTML = I18N[lang].generateBtn; $('phone-label').innerHTML = I18N[lang].phoneLabel; $('phoneInput').placeholder = I18N[lang].phonePlaceholder; $('notes-label').innerHTML = I18N[lang].notesLabel; $('searchInput').placeholder = t('searchPlaceholder'); $('alertTitle').textContent = I18N[lang].alertTitle; $('alertMessage').textContent = I18N[lang].alertMessage; for (const item of State.cart) { const product = State.products.find(p => p.code === item.productId); if (product) item.name = getName(product); for (const extra of item.extras) { const extraDef = State.extras.find(e => e.id === extra.id); if (extraDef) extra.name = getName(extraDef); } } renderMenu(); renderCart(); }
+    function handleSearch(e) { const term = e.target.value.toLowerCase().trim(); $('searchClear').classList.toggle('show', term.length > 0); State.filteredProducts = term ? State.products.filter(p => p.active !== false && (p.name_es?.toLowerCase().includes(term) || p.name_en?.toLowerCase().includes(term) || p.name_zh?.toLowerCase().includes(term))) : State.products.filter(p => p.active !== false); renderMenu(); }
+    window.clearSearch = function() { $('searchInput').value = ''; $('searchClear').classList.remove('show'); State.filteredProducts = State.products.filter(p => p.active !== false); renderMenu(); $('searchInput').focus(); };
+    function getMenuUrl() { return `${CONFIG.SUPABASE_URL}/storage/v1/object/public/${CONFIG.BUCKET_NAME}/${CONFIG.FILE_PATH}?t=${Date.now()}`; }
     async function loadMenuData() {
         try {
-            const response = await fetch(getMenuUrl(), {
-                cache: 'no-cache',
-                headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate' }
-            });
-            
+            const response = await fetch(getMenuUrl(), { cache: 'no-cache', headers: { 'Cache-Control': 'no-cache' } });
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            
             const data = await response.json();
-            State.products = data.products || [];
-            State.extras = data.extras || [];
+            State.products = data.products || []; State.extras = data.extras || [];
             State.filteredProducts = State.products.filter(p => p.active !== false);
-            
-            console.log(`✅ Cargado: ${State.products.length} productos, ${State.extras.length} extras`);
-            
-            $('loadingOverlay').classList.add('hidden');
-            $('mainContent').style.display = 'block';
-            
-            renderMenu();
-            renderCart();
-            
-            // Mostrar alerta solo en primera carga
-            if (!sessionStorage.getItem('alertShown')) {
-                $('alertModal').classList.add('show');
-                sessionStorage.setItem('alertShown', 'true');
-            }
-        } catch (error) {
-            console.error('❌ Error:', error);
-            $('loadingOverlay').innerHTML = `
-                <div class="loading-error">
-                    ❌ Error: ${escapeHtml(error.message)}<br><br>
-                    <button class="retry-btn" onclick="location.reload()">Reintentar</button>
-                </div>
-            `;
-        }
+            $('loadingOverlay').classList.add('hidden'); $('mainContent').style.display = 'block';
+            renderMenu(); renderCart();
+            if (!sessionStorage.getItem('alertShown')) { $('alertModal').classList.add('show'); sessionStorage.setItem('alertShown', 'true'); }
+        } catch (error) { $('loadingOverlay').innerHTML = `<div class="loading-error">❌ Error: ${escapeHtml(error.message)}<br><br><button class="retry-btn" onclick="location.reload()">Reintentar</button></div>`; }
     }
-
-    // ============================================================
-    // INICIALIZACIÓN
-    // ============================================================
     document.addEventListener('DOMContentLoaded', () => {
-        // Event listeners
-        document.querySelectorAll('.lang-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const lang = btn.dataset.lang;
-                setLanguage(lang);
-                document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-            });
-        });
-        
-        $('searchInput').addEventListener('input', handleSearch);
-        $('phoneInput').addEventListener('input', validatePhone);
-        
-        // Cerrar modales con Escape
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                $('qrModal').classList.remove('show');
-                $('priceModal').classList.remove('show');
-                $('alertModal').classList.remove('show');
-            }
-            // Confirmar precio con Enter
-            if (e.key === 'Enter' && $('priceModal').classList.contains('show')) {
-                confirmPrice();
-            }
-        });
-        
-        // Cerrar modal al hacer click fuera
-        document.querySelectorAll('.modal-overlay').forEach(modal => {
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal && modal.id !== 'alertModal') {
-                    modal.classList.remove('show');
-                }
-            });
-        });
-        
+        document.querySelectorAll('.lang-btn').forEach(btn => btn.addEventListener('click', () => { const lang = btn.dataset.lang; setLanguage(lang); document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }));
+        $('searchInput').addEventListener('input', handleSearch); $('phoneInput').addEventListener('input', validatePhone);
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { $('qrModal').classList.remove('show'); $('priceModal').classList.remove('show'); $('alertModal').classList.remove('show'); } if (e.key === 'Enter' && $('priceModal').classList.contains('show')) confirmPrice(); });
+        document.querySelectorAll('.modal-overlay').forEach(modal => modal.addEventListener('click', (e) => { if (e.target === modal && modal.id !== 'alertModal') modal.classList.remove('show'); }));
         loadMenuData();
     });
 </script>
