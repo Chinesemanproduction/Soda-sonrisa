@@ -1266,17 +1266,23 @@
     }
 
     function generateQRContent() {
-        const validItems = State.cart.filter(i => i.qty > 0);
-        if (!validItems.length) return '';
-        return validItems.map(item => { 
-            const simple = isSimple(item.productId); 
-            // ✅ 简单产品使用 attrCode = 1 (con olor)
-            const attrCode = simple ? 1 : getAttrCode(item.importType, item.customType); 
-            let str = `${item.productId}|${item.qty}|${attrCode}`; 
-            if (item.extras?.length) str += '|' + item.extras.map(e => `${e.id}|${e.price}`).join('!'); 
-            return str; 
-        }).join(';');
-    }
+    const validItems = State.cart.filter(i => i.qty > 0);
+    if (!validItems.length) return '';
+    return validItems.map(item => { 
+        const simple = isSimple(item.productId); 
+        let attrCode;
+        if (simple) {
+            // ✅ 简单产品：attrCode = 1 表示 "con olor"
+            attrCode = 1;
+        } else {
+            // 非简单产品：根据用户选择计算
+            attrCode = getAttrCode(item.importType, item.customType);
+        }
+        let str = `${item.productId}|${item.qty}|${attrCode}`; 
+        if (item.extras?.length) str += '|' + item.extras.map(e => `${e.id}|${e.price}`).join('!'); 
+        return str; 
+    }).join(';');
+}
 
     window.generateOrderQR = function() {
         if (!validatePhone()) { 
