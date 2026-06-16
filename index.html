@@ -1442,7 +1442,7 @@
     function validatePhone() {
         const phone = $('phoneInput').value.trim();
         const error = $('phoneError');
-        if (phone && !/^\\d{8}$/.test(phone)) {
+        if (phone && !/^\d{8}$/.test(phone)) {
             error.classList.add('show');
             return false;
         }
