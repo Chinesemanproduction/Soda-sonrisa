@@ -56,7 +56,6 @@
             font-weight: 500;
         }
 
-        /* ===== TAB BAR ===== */
         .tab-bar {
             display: flex;
             background: var(--card);
@@ -466,7 +465,6 @@
             font-weight: 700;
         }
 
-        /* ===== ORDERS LIST ===== */
         .order-card {
             background: var(--card);
             border-radius: var(--radius);
@@ -556,7 +554,6 @@
             transform: scale(0.97);
         }
 
-        /* ===== CART ===== */
         .cart-floating {
             position: fixed;
             bottom: 0;
@@ -730,7 +727,6 @@
             font-weight: 500;
         }
 
-        /* ===== MODALS ===== */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -809,39 +805,19 @@
             transform: translateY(-1px);
         }
 
-        /* ===== WHATSAPP BUTTON ===== */
-        .whatsapp-row {
-            display: flex;
-            gap: 10px;
-            margin-top: 12px;
-        }
-        .whatsapp-row button {
-            flex: 1;
+        .btn-copy {
+            background: var(--bg);
+            color: var(--text);
+            border: 1.5px solid #e0e4e8 !important;
             padding: 12px;
-            border: none;
             border-radius: 30px;
             font-size: 14px;
             font-weight: 700;
             cursor: pointer;
             transition: var(--transition);
             font-family: inherit;
-        }
-        .btn-wa {
-            background: #25D366;
-            color: white;
-            box-shadow: 0 2px 8px rgba(37,211,102,0.3);
-        }
-        .btn-wa:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 16px rgba(37,211,102,0.4);
-        }
-        .btn-wa:active {
-            transform: scale(0.96);
-        }
-        .btn-copy {
-            background: var(--bg);
-            color: var(--text);
-            border: 1.5px solid #e0e4e8 !important;
+            width: 100%;
+            margin-top: 8px;
         }
         .btn-copy:hover {
             background: #f0f2f5;
@@ -1046,13 +1022,11 @@
         <p id="shop-desc">📱 Escanea el código para pagar en caja</p>
     </div>
 
-    <!-- ===== TAB BAR ===== -->
     <div class="tab-bar">
         <button class="tab-btn active" data-tab="order" id="tabOrder">🍽️ Pedir</button>
         <button class="tab-btn" data-tab="orders" id="tabOrders">📋 Mis Pedidos</button>
     </div>
 
-    <!-- ===== TAB 1: HACER PEDIDO ===== -->
     <div class="tab-content active" id="tabContentOrder">
         <div class="input-section">
             <label class="input-label" id="phone-label">📞 Teléfono de contacto *</label>
@@ -1074,7 +1048,6 @@
         <div id="menu-container"></div>
     </div>
 
-    <!-- ===== TAB 2: MIS PEDIDOS ===== -->
     <div class="tab-content" id="tabContentOrders">
         <div class="input-section">
             <label class="input-label">📞 Teléfono para consultar pedidos</label>
@@ -1090,7 +1063,6 @@
     </div>
 </div>
 
-<!-- ===== CART FLOATING ===== -->
 <div class="cart-floating" id="cartFloating">
     <div class="cart-header" onclick="toggleCart()">
         <span class="cart-header-title">
@@ -1111,21 +1083,16 @@
     </button>
 </div>
 
-<!-- ===== QR MODAL ===== -->
 <div id="qrModal" class="modal-overlay">
     <div class="modal-content">
         <h3 id="modal-title">📱 Muestra este código</h3>
         <div id="qr-code" class="qr-container"></div>
         <div class="order-summary" id="qr-order-summary"></div>
-        <div class="whatsapp-row">
-            <button class="btn-wa" onclick="sendWhatsApp()">💬 Enviar por WhatsApp</button>
-            <button class="btn-copy" onclick="copyQRMessage()">📋 Copiar</button>
-        </div>
+        <button class="btn-copy" onclick="copyQRMessage()">📋 Copiar QR</button>
         <button class="close-modal" onclick="closeQRModal()" id="close-btn">Cerrar</button>
     </div>
 </div>
 
-<!-- ===== PRICE MODAL ===== -->
 <div id="priceModal" class="modal-overlay">
     <div class="modal-content" style="width: 320px;">
         <h4 id="priceModalTitle" style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Ingrese precio</h4>
@@ -1138,7 +1105,6 @@
     </div>
 </div>
 
-<!-- ===== ALERT MODAL ===== -->
 <div id="alertModal" class="modal-overlay">
     <div class="modal-content" style="width: 320px;">
         <div class="alert-icon">📢</div>
@@ -1163,7 +1129,7 @@
     const CONFIG = {
         BUCKET_MENU: 'menu',
         FILE_MENU: 'menu.json',
-        BUCKET_ORDERS: 'orders_full',  // 直接读写 orders_full.json
+        BUCKET_ORDERS: 'orders_full',
         FILE_ORDERS: 'orders_full.json',
         SIMPLE_CODES: new Set([1, 2, 3, 4, 6, 7, 46, 47]),
         MIN_EXTRA_PRICE: 1000,
@@ -1225,7 +1191,8 @@
             status_cooking:"🍳 Cooking",
             status_paid:"💰 Paid",
             status_completed:"✅ Completed",
-            status_cancelled:"❌ Cancelled"
+            status_cancelled:"❌ Cancelled",
+            redirecting:"⏳ Redirecting to WhatsApp..."
         },
         es: {
             shopName:"Soda Sonrisas",
@@ -1265,7 +1232,8 @@
             status_cooking:"🍳 En cocina",
             status_paid:"💰 Pagado",
             status_completed:"✅ Completado",
-            status_cancelled:"❌ Cancelado"
+            status_cancelled:"❌ Cancelado",
+            redirecting:"⏳ Redirigiendo a WhatsApp..."
         },
         zh: {
             shopName:"Soda Sonrisas",
@@ -1305,7 +1273,8 @@
             status_cooking:"🍳 制作中",
             status_paid:"💰 已支付",
             status_completed:"✅ 已完成",
-            status_cancelled:"❌ 已取消"
+            status_cancelled:"❌ 已取消",
+            redirecting:"⏳ 正在跳转到 WhatsApp..."
         }
     };
 
@@ -1332,7 +1301,6 @@
     // SUPABASE STORAGE 读写
     // ============================================================
 
-    // 读取 orders_full.json
     async function readOrdersFull() {
         try {
             const url = `${SUPABASE_URL}/storage/v1/object/public/${CONFIG.BUCKET_ORDERS}/${CONFIG.FILE_ORDERS}?t=${Date.now()}`;
@@ -1348,7 +1316,6 @@
         }
     }
 
-    // 写入 orders_full.json (覆盖)
     async function writeOrdersFull(data) {
         try {
             const url = `${SUPABASE_URL}/storage/v1/object/public/${CONFIG.BUCKET_ORDERS}/${CONFIG.FILE_ORDERS}`;
@@ -1553,7 +1520,7 @@
     }
 
     // ============================================================
-    // 生成订单 → 写入 orders_full.json
+    // 生成订单 → 写入 orders_full.json → 自动发送 WhatsApp
     // ============================================================
     window.generateOrderQR = async function() {
         // 1. 验证电话号码
@@ -1620,7 +1587,6 @@
         const fullData = await readOrdersFull();
         fullData.orders = fullData.orders || [];
 
-        // 检查是否已存在相同订单（防止重复提交）
         const exists = fullData.orders.some(o => o.orderId === orderId);
         if (!exists) {
             fullData.orders.push({
@@ -1631,7 +1597,7 @@
                 notes: notes,
                 qrContent: qrContent,
                 whatsappMessage: waMessage,
-                status: 'sent',  // 初始状态：已发送
+                status: 'sent',
                 statusHistory: [
                     { status: 'sent', timestamp: new Date().toISOString() }
                 ],
@@ -1661,6 +1627,15 @@
         try {
             localStorage.setItem('lastPhone', phone);
         } catch(e) {}
+
+        // ============================================================
+        // 🔥 10. 自动打开 WhatsApp 发送订单
+        // ============================================================
+        setTimeout(() => {
+            const encoded = encodeURIComponent(waMessage);
+            const waUrl = `https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${encoded}`;
+            window.open(waUrl, '_blank');
+        }, 1500);
     };
 
     // ============================================================
@@ -1683,23 +1658,21 @@
             ${phone ? `<div>📞 Tel: ${escapeHtml(phone)}</div>` : ''}
             ${notes ? `<div>📝 Notas: ${escapeHtml(notes.substring(0, 50))}${notes.length > 50 ? '...' : ''}</div>` : ''}
             <div style="margin-top:8px;font-size:12px;color:var(--text-light);">📨 Estado: Enviado</div>
+            <div style="margin-top:8px;font-size:12px;color:var(--secondary);">${t('redirecting')}</div>
         `;
         $('modal-title').textContent = t('modalTitle');
         $('close-btn').textContent = t('closeBtn');
         $('qrModal').classList.add('show');
+
+        // 5秒后自动关闭 QR 模态框
+        setTimeout(() => {
+            $('qrModal').classList.remove('show');
+        }, 5000);
     }
 
     // ============================================================
-    // WHATSAPP 发送
+    // 复制 QR 信息
     // ============================================================
-    window.sendWhatsApp = function() {
-        const summary = $('qr-order-summary')?.textContent?.trim() || '';
-        const message = `🧾 *Nuevo pedido*\n\n${summary}\n\n📍 Soda Sonrisas`;
-        const encoded = encodeURIComponent(message);
-        const url = `https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${encoded}`;
-        window.open(url, '_blank');
-    };
-
     window.copyQRMessage = function() {
         if (!State.currentQRData) {
             showToast('No hay QR para copiar');
@@ -1739,10 +1712,7 @@
             const fullData = await readOrdersFull();
             const orders = fullData.orders || [];
 
-            // 筛选该手机号的订单
             const myOrders = orders.filter(o => o.phone === phone);
-
-            // 按时间倒序排列
             myOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
             if (myOrders.length === 0) {
@@ -1874,7 +1844,6 @@
             renderMenu();
             renderCart();
 
-            // 恢复上次保存的电话号码
             try {
                 const lastPhone = localStorage.getItem('lastPhone');
                 if (lastPhone) {
@@ -1893,10 +1862,9 @@
     }
 
     // ============================================================
-    // TABS
+    // TABS & 初始化
     // ============================================================
     document.addEventListener('DOMContentLoaded', () => {
-        // 语言切换
         document.querySelectorAll('.lang-btn').forEach(btn => btn.addEventListener('click', () => {
             const lang = btn.dataset.lang;
             setLanguage(lang);
@@ -1904,7 +1872,6 @@
             btn.classList.add('active');
         }));
 
-        // Tab 切换
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -1917,20 +1884,15 @@
                     $('tabContentOrder').classList.add('active');
                 } else if (tab === 'orders') {
                     $('tabContentOrders').classList.add('active');
-                    // 自动填入电话号码
                     const phone = $('phoneInput').value.trim();
                     if (phone) $('orderPhoneInput').value = phone;
                 }
             });
         });
 
-        // 搜索
         $('searchInput').addEventListener('input', handleSearch);
-
-        // 电话输入验证
         $('phoneInput').addEventListener('input', validatePhone);
 
-        // 电话输入自动同步到查询页
         $('phoneInput').addEventListener('input', function() {
             const phone = this.value.trim();
             if (phone && /^\d{8}$/.test(phone)) {
@@ -1938,12 +1900,10 @@
             }
         });
 
-        // 查询页按 Enter 触发查询
         $('orderPhoneInput').addEventListener('keydown', (e) => {
             if (e.key === 'Enter') window.queryMyOrders();
         });
 
-        // ESC 关闭模态框
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 $('qrModal').classList.remove('show');
@@ -1953,7 +1913,6 @@
             if (e.key === 'Enter' && $('priceModal').classList.contains('show')) confirmPrice();
         });
 
-        // 点击外部关闭模态框
         document.querySelectorAll('.modal-overlay').forEach(modal => modal.addEventListener('click', (e) => {
             if (e.target === modal && modal.id !== 'alertModal') modal.classList.remove('show');
         }));
