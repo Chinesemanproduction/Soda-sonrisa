@@ -706,11 +706,11 @@
             box-shadow: 0 4px 12px rgba(39,174,96,0.3);
             font-family: inherit;
         }
-        .btn-generate:hover {
+        .btn-generate:hover:not(:disabled) {
             transform: translateY(-1px);
             box-shadow: 0 6px 20px rgba(39,174,96,0.4);
         }
-        .btn-generate:active {
+        .btn-generate:active:not(:disabled) {
             transform: translateY(0) scale(0.98);
         }
         .btn-generate:disabled {
@@ -1192,7 +1192,7 @@
             status_paid:"💰 Paid",
             status_completed:"✅ Completed",
             status_cancelled:"❌ Cancelled",
-            redirecting:"⏳ Redirecting to WhatsApp..."
+            redirecting:"⏳ Opening WhatsApp..."
         },
         es: {
             shopName:"Soda Sonrisas",
@@ -1233,7 +1233,7 @@
             status_paid:"💰 Pagado",
             status_completed:"✅ Completado",
             status_cancelled:"❌ Cancelado",
-            redirecting:"⏳ Redirigiendo a WhatsApp..."
+            redirecting:"⏳ Abriendo WhatsApp..."
         },
         zh: {
             shopName:"Soda Sonrisas",
@@ -1274,7 +1274,7 @@
             status_paid:"💰 已支付",
             status_completed:"✅ 已完成",
             status_cancelled:"❌ 已取消",
-            redirecting:"⏳ 正在跳转到 WhatsApp..."
+            redirecting:"⏳ 正在打开 WhatsApp..."
         }
     };
 
@@ -1391,8 +1391,34 @@
         container.innerHTML = itemsHtml;
         $('cart-total-amount').textContent = `₡${total.toLocaleString()}`;
         $('cart-badge').textContent = totalQty;
-        $('generateQRBtn').disabled = totalQty === 0;
+        $('generateQRBtn').disabled = totalQty === 0 || !isPhoneValid();
         $('cart-title').textContent = t('cartTitle');
+    }
+
+    // ============================================================
+    // 验证电话号码
+    // ============================================================
+    function isPhoneValid() {
+        const phone = $('phoneInput').value.trim();
+        return /^\d{8}$/.test(phone);
+    }
+
+    function validatePhone() {
+        const phone = $('phoneInput').value.trim();
+        const error = $('phoneError');
+        const btn = $('generateQRBtn');
+
+        if (phone && !/^\d{8}$/.test(phone)) {
+            error.classList.add('show');
+            btn.disabled = true;
+            return false;
+        }
+        error.classList.remove('show');
+
+        // 检查购物车是否有商品
+        const hasItems = State.cart.some(i => i.qty > 0);
+        btn.disabled = !(phone && /^\d{8}$/.test(phone) && hasItems);
+        return true;
     }
 
     // ============================================================
@@ -1430,6 +1456,8 @@
         }
         renderMenu();
         renderCart();
+        // 重新检查按钮状态
+        validatePhone();
     };
 
     window.updateOption = function(productId, type, value) {
@@ -1496,17 +1524,6 @@
         $('cartFloating').classList.toggle('minimized', State.cartMinimized);
     };
 
-    function validatePhone() {
-        const phone = $('phoneInput').value.trim();
-        const error = $('phoneError');
-        if (phone && !/^\d{8}$/.test(phone)) {
-            error.classList.add('show');
-            return false;
-        }
-        error.classList.remove('show');
-        return true;
-    }
-
     function generateQRContent() {
         const validItems = State.cart.filter(i => i.qty > 0);
         if (!validItems.length) return '';
@@ -1520,15 +1537,10 @@
     }
 
     // ============================================================
-    // 生成订单 → 写入 orders_full.json → 自动发送 WhatsApp
+    // 生成订单 → 写入 orders_full.json → 立即触发 WhatsApp
     // ============================================================
     window.generateOrderQR = async function() {
         // 1. 验证电话号码
-        if (!validatePhone()) {
-            $('phoneInput').focus();
-            return;
-        }
-
         const phone = $('phoneInput').value.trim();
         if (!phone || !/^\d{8}$/.test(phone)) {
             showToast('⚠️ ' + t('phoneError'));
@@ -1629,13 +1641,11 @@
         } catch(e) {}
 
         // ============================================================
-        // 🔥 10. 自动打开 WhatsApp 发送订单
+        // 🔥 10. 立即打开 WhatsApp（无延迟）
         // ============================================================
-        setTimeout(() => {
-            const encoded = encodeURIComponent(waMessage);
-            const waUrl = `https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${encoded}`;
-            window.open(waUrl, '_blank');
-        }, 1500);
+        const encoded = encodeURIComponent(waMessage);
+        const waUrl = `https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${encoded}`;
+        window.open(waUrl, '_blank');
     };
 
     // ============================================================
@@ -1802,6 +1812,7 @@
         }
         renderMenu();
         renderCart();
+        validatePhone();
     }
 
     // ============================================================
@@ -1852,6 +1863,8 @@
                 }
             } catch(e) {}
 
+            validatePhone();
+
             if (!sessionStorage.getItem('alertShown')) {
                 $('alertModal').classList.add('show');
                 sessionStorage.setItem('alertShown', 'true');
@@ -1891,13 +1904,14 @@
         });
 
         $('searchInput').addEventListener('input', handleSearch);
-        $('phoneInput').addEventListener('input', validatePhone);
 
+        // 电话输入实时验证 + 更新按钮状态
         $('phoneInput').addEventListener('input', function() {
             const phone = this.value.trim();
             if (phone && /^\d{8}$/.test(phone)) {
                 try { localStorage.setItem('lastPhone', phone); } catch(e) {}
             }
+            validatePhone();
         });
 
         $('orderPhoneInput').addEventListener('keydown', (e) => {
