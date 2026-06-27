@@ -5,173 +5,1060 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Soda Sonrisas - Orden en Línea</title>
     <style>
-        /* ===== 样式代码 (与你原有的一致，为节省篇幅保留核心，请放心复制) ===== */
-        :root { --primary: #ff6b35; --primary-dark: #e55a2b; --secondary: #27ae60; --danger: #e74c3c; --bg: #f8f9fc; --card: #ffffff; --text: #2c3e50; --text-light: #7f8c8d; --border: #eef2f7; --shadow: 0 2px 12px rgba(0,0,0,0.06); --shadow-hover: 0 4px 20px rgba(0,0,0,0.1); --radius: 16px; --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: var(--bg); color: var(--text); padding: 16px 16px 140px 16px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
-        .header { text-align: center; margin-bottom: 16px; padding: 8px 0; }
-        .header h1 { font-size: 26px; font-weight: 800; color: var(--text); margin-bottom: 4px; letter-spacing: -0.5px; }
-        .header p { color: var(--text-light); font-size: 13px; font-weight: 500; }
-        .tab-bar { display: flex; background: var(--card); border-radius: 30px; padding: 4px; margin-bottom: 20px; box-shadow: var(--shadow); border: 1px solid var(--border); }
-        .tab-btn { flex: 1; padding: 10px 0; border: none; background: transparent; border-radius: 26px; font-weight: 700; font-size: 14px; color: var(--text-light); cursor: pointer; transition: var(--transition); font-family: inherit; }
-        .tab-btn.active { background: var(--primary); color: white; box-shadow: 0 2px 8px rgba(255,107,53,0.25); }
-        .tab-btn:hover:not(.active) { color: var(--text); }
-        .tab-content { display: none; animation: fadeIn 0.3s ease; }
-        .tab-content.active { display: block; }
-        .lang-bar { display: flex; justify-content: flex-end; gap: 8px; margin-bottom: 14px; }
-        .lang-btn { background: var(--card); border: 1.5px solid #e0e4e8; padding: 5px 14px; border-radius: 25px; font-size: 12px; cursor: pointer; transition: var(--transition); font-weight: 600; color: var(--text-light); display: flex; align-items: center; gap: 4px; }
-        .lang-btn:hover { border-color: var(--primary); color: var(--primary); }
-        .lang-btn.active { background: var(--primary); border-color: var(--primary); color: white; box-shadow: 0 2px 8px rgba(255,107,53,0.3); }
-        .input-section { background: var(--card); border-radius: var(--radius); padding: 18px; margin-bottom: 14px; box-shadow: var(--shadow); border: 1px solid var(--border); transition: var(--transition); }
-        .input-section:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(255,107,53,0.08); }
-        .input-label { font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; color: var(--text); font-size: 14px; }
-        .input-field { width: 100%; padding: 14px; border: 1.5px solid #e0e4e8; border-radius: 12px; font-size: 16px; transition: var(--transition); background: #fafbfc; font-family: inherit; }
-        .input-field:focus { outline: none; border-color: var(--primary); background: white; }
-        .input-error { color: var(--danger); font-size: 12px; margin-top: 6px; display: none; font-weight: 500; animation: shake 0.3s ease; }
-        .input-error.show { display: block; }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
-        .search-box { margin-bottom: 20px; position: relative; }
-        .search-input { width: 100%; padding: 14px 18px 14px 44px; border: 1.5px solid #e0e4e8; border-radius: 30px; font-size: 15px; background: var(--card); transition: var(--transition); font-family: inherit; }
-        .search-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(255,107,53,0.08); }
-        .search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-light); font-size: 16px; }
-        .search-clear { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: #e0e4e8; border: none; width: 24px; height: 24px; border-radius: 50%; cursor: pointer; display: none; align-items: center; justify-content: center; font-size: 12px; color: var(--text); }
-        .search-clear.show { display: flex; }
-        .category { font-size: 18px; font-weight: 800; margin: 24px 0 14px 4px; padding-left: 14px; border-left: 4px solid var(--primary); color: var(--text); display: flex; align-items: center; justify-content: space-between; }
-        .category-count { font-size: 13px; color: var(--text-light); font-weight: 600; background: var(--bg); padding: 2px 10px; border-radius: 20px; }
-        .menu-card { background: var(--card); border-radius: var(--radius); margin-bottom: 14px; padding: 18px; box-shadow: var(--shadow); border: 1px solid var(--border); transition: var(--transition); position: relative; overflow: hidden; }
-        .menu-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-1px); }
-        .menu-card.in-cart { border-color: rgba(255,107,53,0.2); background: linear-gradient(to right, rgba(255,107,53,0.02), transparent); }
-        .menu-card.in-cart::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--primary); border-radius: var(--radius) 0 0 var(--radius); }
-        .menu-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 10px; }
-        .menu-name { font-size: 16px; font-weight: 700; color: var(--text); flex: 1; line-height: 1.3; }
-        .menu-price { font-size: 20px; font-weight: 800; color: var(--primary); white-space: nowrap; }
-        .menu-price .currency { font-size: 14px; font-weight: 600; margin-right: 1px; }
-        .options-row { display: flex; flex-wrap: wrap; gap: 12px; margin: 14px 0; padding-top: 10px; border-top: 1px dashed var(--border); }
-        .option-group { display: flex; align-items: center; gap: 6px; background: var(--bg); padding: 4px; border-radius: 30px; }
-        .option-label { font-size: 13px; padding: 0 4px 0 10px; color: var(--text-light); font-weight: 600; }
-        .option-btn { background: white; border: 1.5px solid #e0e4e8; padding: 5px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; transition: var(--transition); font-weight: 600; color: var(--text-light); white-space: nowrap; }
-        .option-btn:hover { border-color: var(--primary); color: var(--primary); }
-        .option-btn.active { background: var(--primary); border-color: var(--primary); color: white; box-shadow: 0 2px 6px rgba(255,107,53,0.25); }
-        .qty-control { display: flex; align-items: center; justify-content: flex-end; gap: 14px; margin-top: 10px; }
-        .qty-btn { width: 40px; height: 40px; border-radius: 50%; border: none; background: var(--primary); color: white; font-size: 18px; font-weight: 700; cursor: pointer; transition: var(--transition); display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(255,107,53,0.25); -webkit-user-select: none; user-select: none; }
-        .qty-btn:hover { transform: scale(1.05); box-shadow: 0 4px 12px rgba(255,107,53,0.35); }
-        .qty-btn:active { transform: scale(0.92); }
-        .qty-btn.minus { background: var(--danger); box-shadow: 0 2px 6px rgba(231,76,60,0.25); }
-        .qty-btn.minus:hover { box-shadow: 0 4px 12px rgba(231,76,60,0.35); }
-        .qty-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; box-shadow: none; }
-        .qty-number { font-size: 20px; font-weight: 800; min-width: 36px; text-align: center; color: var(--text); transition: var(--transition); }
-        .qty-number.pulse { animation: pulseNumber 0.3s ease; }
-        @keyframes pulseNumber { 0% { transform: scale(1); } 50% { transform: scale(1.3); color: var(--primary); } 100% { transform: scale(1); } }
-        .extras-section { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border); animation: slideDown 0.3s ease; }
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
-        .extras-title { font-size: 12px; font-weight: 700; color: var(--text-light); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .extra-buttons { display: flex; flex-wrap: wrap; gap: 8px; }
-        .extra-btn { background: var(--bg); border: 1.5px solid transparent; padding: 8px 14px; border-radius: 30px; font-size: 13px; cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 6px; font-weight: 600; color: var(--text); font-family: inherit; }
-        .extra-btn:hover { background: white; border-color: var(--primary); color: var(--primary); transform: translateY(-1px); box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
-        .extra-btn:active { transform: translateY(0) scale(0.95); }
-        .extra-btn .extra-price { color: var(--primary); font-weight: 700; }
-        .order-card { background: var(--card); border-radius: var(--radius); padding: 16px 18px; margin-bottom: 12px; box-shadow: var(--shadow); border: 1px solid var(--border); transition: var(--transition); }
-        .order-card:hover { box-shadow: var(--shadow-hover); }
-        .order-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; flex-wrap: wrap; gap: 6px; }
-        .order-id { font-weight: 700; font-size: 14px; color: var(--text); }
-        .order-status { font-size: 12px; font-weight: 700; padding: 3px 12px; border-radius: 20px; }
-        .order-status.sent { background: #d6eaf8; color: #2471a3; }
-        .order-status.cooking { background: #fdebd0; color: #b9770e; }
-        .order-status.paid { background: #d5f5e3; color: #1e8449; }
-        .order-status.completed { background: #a9dfbf; color: #145a32; }
-        .order-status.cancelled { background: #fadbd8; color: #922b21; }
-        .order-items { font-size: 14px; color: var(--text); padding: 8px 0; }
-        .order-total { font-weight: 800; color: var(--primary); font-size: 16px; text-align: right; border-top: 1px solid var(--border); padding-top: 8px; margin-top: 4px; }
-        .order-phone { font-size: 12px; color: var(--text-light); margin-top: 4px; }
-        .order-empty { text-align: center; padding: 40px 20px; color: var(--text-light); }
-        .order-empty-icon { font-size: 48px; margin-bottom: 12px; opacity: 0.5; }
-        .query-btn { width: 100%; background: var(--primary); color: white; border: none; padding: 14px; border-radius: 30px; font-size: 16px; font-weight: 700; cursor: pointer; transition: var(--transition); font-family: inherit; margin-top: 4px; }
-        .query-btn:hover { background: var(--primary-dark); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(255,107,53,0.3); }
-        .query-btn:active { transform: scale(0.97); }
-        .cart-floating { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 2px solid var(--primary); box-shadow: 0 -8px 32px rgba(0,0,0,0.12); padding: 16px 20px calc(16px + env(safe-area-inset-bottom, 0px)) 20px; z-index: 100; transition: var(--transition); }
-        .cart-floating.minimized { transform: translateY(calc(100% - 60px)); }
-        .cart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; cursor: pointer; }
-        .cart-header-title { font-weight: 700; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 6px; }
-        .cart-badge { background: var(--primary); color: white; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 20px; min-width: 20px; text-align: center; }
-        .cart-toggle { font-size: 12px; color: var(--text-light); transition: var(--transition); }
-        .cart-floating.minimized .cart-toggle { transform: rotate(180deg); }
-        .cart-items { max-height: 220px; overflow-y: auto; margin-bottom: 12px; scrollbar-width: thin; scrollbar-color: var(--primary) transparent; }
-        .cart-items::-webkit-scrollbar { width: 4px; }
-        .cart-items::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 4px; }
-        .cart-item { display: flex; justify-content: space-between; align-items: flex-start; font-size: 13px; padding: 8px 0; border-bottom: 1px dashed var(--border); animation: fadeIn 0.2s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
-        .cart-item-name { flex: 2; font-weight: 600; line-height: 1.4; }
-        .cart-item-attrs { font-size: 11px; color: var(--text-light); margin-top: 2px; font-weight: 500; }
-        .cart-item-price { font-weight: 700; color: var(--primary); white-space: nowrap; text-align: right; }
-        .cart-item-extras { padding-left: 16px; margin-top: 4px; font-size: 12px; color: var(--text-light); }
-        .cart-item-extra { display: flex; justify-content: space-between; align-items: center; padding: 3px 0; }
-        .delete-extra { background: none; border: none; color: var(--danger); font-size: 13px; cursor: pointer; padding: 2px 6px; border-radius: 4px; transition: var(--transition); opacity: 0.7; }
-        .delete-extra:hover { opacity: 1; background: rgba(231,76,60,0.08); }
-        .cart-total { display: flex; justify-content: space-between; font-weight: 800; font-size: 18px; padding: 12px 0; border-top: 2px solid var(--border); color: var(--text); }
-        .cart-total-amount { color: var(--primary); font-size: 22px; }
-        .btn-generate { width: 100%; background: var(--secondary); color: white; border: none; padding: 16px; border-radius: 40px; font-size: 16px; font-weight: 700; cursor: pointer; transition: var(--transition); display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(39,174,96,0.3); font-family: inherit; }
-        .btn-generate:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(39,174,96,0.4); }
-        .btn-generate:active { transform: translateY(0) scale(0.98); }
-        .btn-generate:disabled { background: #bdc3c7; pointer-events: none; box-shadow: none; opacity: 0.7; }
-        .empty-cart { text-align: center; color: var(--text-light); padding: 20px; font-size: 14px; font-weight: 500; }
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 200; opacity: 0; visibility: hidden; transition: var(--transition); padding: 20px; }
-        .modal-overlay.show { opacity: 1; visibility: visible; }
-        .modal-content { background: white; border-radius: 24px; padding: 28px; max-width: 90%; width: 380px; text-align: center; transform: scale(0.9) translateY(20px); transition: var(--transition); box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
-        .modal-overlay.show .modal-content { transform: scale(1) translateY(0); }
-        .modal-content h3 { margin-bottom: 20px; color: var(--text); font-size: 20px; font-weight: 800; }
-        .qr-container { margin: 20px 0; display: flex; justify-content: center; padding: 16px; background: white; border-radius: 16px; border: 2px dashed var(--border); }
-        .order-summary { background: var(--bg); border-radius: 14px; padding: 16px; margin: 16px 0; font-size: 13px; text-align: left; line-height: 1.8; }
-        .order-summary strong { color: var(--primary); }
-        .close-modal { background: var(--primary); color: white; border: none; padding: 14px 32px; border-radius: 40px; font-size: 16px; font-weight: 700; cursor: pointer; transition: var(--transition); font-family: inherit; width: 100%; margin-top: 8px; }
-        .close-modal:hover { background: var(--primary-dark); transform: translateY(-1px); }
-        .whatsapp-row { display: flex; gap: 10px; margin-top: 12px; }
-        .whatsapp-row button { flex: 1; padding: 12px; border: none; border-radius: 30px; font-size: 14px; font-weight: 700; cursor: pointer; transition: var(--transition); font-family: inherit; }
-        .btn-wa { background: #25D366; color: white; box-shadow: 0 2px 8px rgba(37,211,102,0.3); }
-        .btn-wa:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(37,211,102,0.4); }
-        .btn-wa:active { transform: scale(0.96); }
-        .btn-copy { background: var(--bg); color: var(--text); border: 1.5px solid #e0e4e8 !important; }
-        .btn-copy:hover { background: #f0f2f5; }
-        .price-input { width: 100%; padding: 16px; font-size: 24px; text-align: center; border: 2px solid var(--primary); border-radius: 14px; margin: 20px 0; font-weight: 700; color: var(--text); font-family: inherit; transition: var(--transition); }
-        .price-input:focus { outline: none; box-shadow: 0 0 0 4px rgba(255,107,53,0.15); }
-        .price-modal-buttons { display: flex; gap: 12px; }
-        .price-modal-buttons button { flex: 1; padding: 12px; border: none; border-radius: 30px; font-size: 15px; cursor: pointer; font-weight: 700; transition: var(--transition); font-family: inherit; }
-        .price-confirm { background: var(--secondary); color: white; box-shadow: 0 2px 8px rgba(39,174,96,0.25); }
-        .price-confirm:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(39,174,96,0.35); }
-        .price-cancel { background: var(--bg); color: var(--text); border: 1.5px solid #e0e4e8 !important; }
-        .price-cancel:hover { background: #f0f2f5; }
-        .alert-icon { font-size: 48px; margin-bottom: 12px; }
-        .alert-ok { background: var(--primary); color: white; border: none; padding: 14px 32px; border-radius: 40px; font-size: 16px; font-weight: 700; cursor: pointer; transition: var(--transition); font-family: inherit; width: 100%; }
-        .alert-ok:hover { background: var(--primary-dark); }
-        .loading-overlay { position: fixed; inset: 0; background: white; display: flex; align-items: center; justify-content: center; z-index: 500; flex-direction: column; gap: 20px; transition: opacity 0.4s ease, visibility 0.4s ease; }
-        .loading-overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-        .spinner { width: 48px; height: 48px; border: 4px solid #f0f0f0; border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
-        .loading-text { color: var(--text-light); font-size: 15px; font-weight: 600; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .loading-error { color: var(--danger); text-align: center; padding: 24px; font-weight: 600; }
-        .retry-btn { margin-top: 16px; padding: 12px 28px; background: var(--primary); color: white; border: none; border-radius: 30px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit; transition: var(--transition); }
-        .retry-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(255,107,53,0.3); }
-        .toast { position: fixed; top: 60px; left: 50%; transform: translateX(-50%) translateY(-20px); background: var(--text); color: white; padding: 12px 24px; border-radius: 30px; font-size: 14px; font-weight: 600; z-index: 300; opacity: 0; transition: var(--transition); pointer-events: none; box-shadow: 0 4px 16px rgba(0,0,0,0.15); white-space: nowrap; }
-        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-        .no-results { text-align: center; padding: 40px 20px; color: var(--text-light); }
-        .no-results-icon { font-size: 48px; margin-bottom: 12px; opacity: 0.5; }
-        @media (min-width: 768px) { body { max-width: 600px; margin: 0 auto; padding-bottom: 160px; } .cart-floating { max-width: 600px; left: 50%; transform: translateX(-50%); } .cart-floating.minimized { transform: translateX(-50%) translateY(calc(100% - 60px)); } }
+        /* ===== 样式代码 ===== */
+        :root {
+            --primary: #ff6b35;
+            --primary-dark: #e55a2b;
+            --secondary: #27ae60;
+            --danger: #e74c3c;
+            --bg: #f8f9fc;
+            --card: #ffffff;
+            --text: #2c3e50;
+            --text-light: #7f8c8d;
+            --border: #eef2f7;
+            --shadow: 0 2px 12px rgba(0,0,0,0.06);
+            --shadow-hover: 0 4px 20px rgba(0,0,0,0.1);
+            --radius: 16px;
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 16px 16px 140px 16px;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 16px;
+            padding: 8px 0;
+        }
+        .header h1 {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 4px;
+            letter-spacing: -0.5px;
+        }
+        .header p {
+            color: var(--text-light);
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .tab-bar {
+            display: flex;
+            background: var(--card);
+            border-radius: 30px;
+            padding: 4px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 10px 0;
+            border: none;
+            background: transparent;
+            border-radius: 26px;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: inherit;
+        }
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 2px 8px rgba(255,107,53,0.25);
+        }
+        .tab-btn:hover:not(.active) {
+            color: var(--text);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
+        .lang-bar {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+        .lang-btn {
+            background: var(--card);
+            border: 1.5px solid #e0e4e8;
+            padding: 5px 14px;
+            border-radius: 25px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .lang-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        .lang-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+            box-shadow: 0 2px 8px rgba(255,107,53,0.3);
+        }
+
+        .input-section {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 18px;
+            margin-bottom: 14px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            transition: var(--transition);
+        }
+        .input-section:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(255,107,53,0.08);
+        }
+        .input-label {
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text);
+            font-size: 14px;
+        }
+        .input-field {
+            width: 100%;
+            padding: 14px;
+            border: 1.5px solid #e0e4e8;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: var(--transition);
+            background: #fafbfc;
+            font-family: inherit;
+        }
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+        }
+        .input-error {
+            color: var(--danger);
+            font-size: 12px;
+            margin-top: 6px;
+            display: none;
+            font-weight: 500;
+            animation: shake 0.3s ease;
+        }
+        .input-error.show {
+            display: block;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .search-box {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .search-input {
+            width: 100%;
+            padding: 14px 18px 14px 44px;
+            border: 1.5px solid #e0e4e8;
+            border-radius: 30px;
+            font-size: 15px;
+            background: var(--card);
+            transition: var(--transition);
+            font-family: inherit;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(255,107,53,0.08);
+        }
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+            font-size: 16px;
+        }
+        .search-clear {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #e0e4e8;
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: var(--text);
+        }
+        .search-clear.show {
+            display: flex;
+        }
+
+        .category {
+            font-size: 18px;
+            font-weight: 800;
+            margin: 24px 0 14px 4px;
+            padding-left: 14px;
+            border-left: 4px solid var(--primary);
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .category-count {
+            font-size: 13px;
+            color: var(--text-light);
+            font-weight: 600;
+            background: var(--bg);
+            padding: 2px 10px;
+            border-radius: 20px;
+        }
+
+        .menu-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            margin-bottom: 14px;
+            padding: 18px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        .menu-card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-1px);
+        }
+        .menu-card.in-cart {
+            border-color: rgba(255,107,53,0.2);
+            background: linear-gradient(to right, rgba(255,107,53,0.02), transparent);
+        }
+        .menu-card.in-cart::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--primary);
+            border-radius: var(--radius) 0 0 var(--radius);
+        }
+
+        .menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+        .menu-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text);
+            flex: 1;
+            line-height: 1.3;
+        }
+        .menu-price {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--primary);
+            white-space: nowrap;
+        }
+        .menu-price .currency {
+            font-size: 14px;
+            font-weight: 600;
+            margin-right: 1px;
+        }
+
+        .options-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 14px 0;
+            padding-top: 10px;
+            border-top: 1px dashed var(--border);
+        }
+        .option-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--bg);
+            padding: 4px;
+            border-radius: 30px;
+        }
+        .option-label {
+            font-size: 13px;
+            padding: 0 4px 0 10px;
+            color: var(--text-light);
+            font-weight: 600;
+        }
+        .option-btn {
+            background: white;
+            border: 1.5px solid #e0e4e8;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            color: var(--text-light);
+            white-space: nowrap;
+        }
+        .option-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        .option-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+            box-shadow: 0 2px 6px rgba(255,107,53,0.25);
+        }
+
+        .qty-control {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 14px;
+            margin-top: 10px;
+        }
+        .qty-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            background: var(--primary);
+            color: white;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 6px rgba(255,107,53,0.25);
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        .qty-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(255,107,53,0.35);
+        }
+        .qty-btn:active {
+            transform: scale(0.92);
+        }
+        .qty-btn.minus {
+            background: var(--danger);
+            box-shadow: 0 2px 6px rgba(231,76,60,0.25);
+        }
+        .qty-btn.minus:hover {
+            box-shadow: 0 4px 12px rgba(231,76,60,0.35);
+        }
+        .qty-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none;
+        }
+        .qty-number {
+            font-size: 20px;
+            font-weight: 800;
+            min-width: 36px;
+            text-align: center;
+            color: var(--text);
+            transition: var(--transition);
+        }
+        .qty-number.pulse {
+            animation: pulseNumber 0.3s ease;
+        }
+        @keyframes pulseNumber {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); color: var(--primary); }
+            100% { transform: scale(1); }
+        }
+
+        .extras-section {
+            margin-top: 16px;
+            padding-top: 14px;
+            border-top: 1px solid var(--border);
+            animation: slideDown 0.3s ease;
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .extras-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-light);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .extra-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .extra-btn {
+            background: var(--bg);
+            border: 1.5px solid transparent;
+            padding: 8px 14px;
+            border-radius: 30px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            color: var(--text);
+            font-family: inherit;
+        }
+        .extra-btn:hover {
+            background: white;
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .extra-btn:active {
+            transform: translateY(0) scale(0.95);
+        }
+        .extra-btn .extra-price {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .order-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 16px 18px;
+            margin-bottom: 12px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            transition: var(--transition);
+        }
+        .order-card:hover {
+            box-shadow: var(--shadow-hover);
+        }
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .order-id {
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--text);
+        }
+        .order-status {
+            font-size: 12px;
+            font-weight: 700;
+            padding: 3px 12px;
+            border-radius: 20px;
+        }
+        .order-status.sent {
+            background: #d6eaf8;
+            color: #2471a3;
+        }
+        .order-status.cooking {
+            background: #fdebd0;
+            color: #b9770e;
+        }
+        .order-status.paid {
+            background: #d5f5e3;
+            color: #1e8449;
+        }
+        .order-status.completed {
+            background: #a9dfbf;
+            color: #145a32;
+        }
+        .order-status.cancelled {
+            background: #fadbd8;
+            color: #922b21;
+        }
+        .order-items {
+            font-size: 14px;
+            color: var(--text);
+            padding: 8px 0;
+        }
+        .order-total {
+            font-weight: 800;
+            color: var(--primary);
+            font-size: 16px;
+            text-align: right;
+            border-top: 1px solid var(--border);
+            padding-top: 8px;
+            margin-top: 4px;
+        }
+        .order-phone {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+        .order-empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-light);
+        }
+        .order-empty-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+
+        .query-btn {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: inherit;
+            margin-top: 4px;
+        }
+        .query-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(255,107,53,0.3);
+        }
+        .query-btn:active {
+            transform: scale(0.97);
+        }
+
+        .cart-floating {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 2px solid var(--primary);
+            box-shadow: 0 -8px 32px rgba(0,0,0,0.12);
+            padding: 16px 20px calc(16px + env(safe-area-inset-bottom, 0px)) 20px;
+            z-index: 100;
+            transition: var(--transition);
+        }
+        .cart-floating.minimized {
+            transform: translateY(calc(100% - 60px));
+        }
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            cursor: pointer;
+        }
+        .cart-header-title {
+            font-weight: 700;
+            color: var(--text);
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .cart-badge {
+            background: var(--primary);
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 20px;
+            min-width: 20px;
+            text-align: center;
+        }
+        .cart-toggle {
+            font-size: 12px;
+            color: var(--text-light);
+            transition: var(--transition);
+        }
+        .cart-floating.minimized .cart-toggle {
+            transform: rotate(180deg);
+        }
+        .cart-items {
+            max-height: 220px;
+            overflow-y: auto;
+            margin-bottom: 12px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary) transparent;
+        }
+        .cart-items::-webkit-scrollbar {
+            width: 4px;
+        }
+        .cart-items::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            font-size: 13px;
+            padding: 8px 0;
+            border-bottom: 1px dashed var(--border);
+            animation: fadeIn 0.2s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .cart-item-name {
+            flex: 2;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+        .cart-item-attrs {
+            font-size: 11px;
+            color: var(--text-light);
+            margin-top: 2px;
+            font-weight: 500;
+        }
+        .cart-item-price {
+            font-weight: 700;
+            color: var(--primary);
+            white-space: nowrap;
+            text-align: right;
+        }
+        .cart-item-extras {
+            padding-left: 16px;
+            margin-top: 4px;
+            font-size: 12px;
+            color: var(--text-light);
+        }
+        .cart-item-extra {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 3px 0;
+        }
+        .delete-extra {
+            background: none;
+            border: none;
+            color: var(--danger);
+            font-size: 13px;
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 4px;
+            transition: var(--transition);
+            opacity: 0.7;
+        }
+        .delete-extra:hover {
+            opacity: 1;
+            background: rgba(231,76,60,0.08);
+        }
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 800;
+            font-size: 18px;
+            padding: 12px 0;
+            border-top: 2px solid var(--border);
+            color: var(--text);
+        }
+        .cart-total-amount {
+            color: var(--primary);
+            font-size: 22px;
+        }
+        .btn-generate {
+            width: 100%;
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 40px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(39,174,96,0.3);
+            font-family: inherit;
+        }
+        .btn-generate:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(39,174,96,0.4);
+        }
+        .btn-generate:active {
+            transform: translateY(0) scale(0.98);
+        }
+        .btn-generate:disabled {
+            background: #bdc3c7;
+            pointer-events: none;
+            box-shadow: none;
+            opacity: 0.7;
+        }
+        .empty-cart {
+            text-align: center;
+            color: var(--text-light);
+            padding: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+            padding: 20px;
+        }
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 24px;
+            padding: 28px;
+            max-width: 90%;
+            width: 380px;
+            text-align: center;
+            transform: scale(0.9) translateY(20px);
+            transition: var(--transition);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+        .modal-overlay.show .modal-content {
+            transform: scale(1) translateY(0);
+        }
+        .modal-content h3 {
+            margin-bottom: 20px;
+            color: var(--text);
+            font-size: 20px;
+            font-weight: 800;
+        }
+        .qr-container {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            padding: 16px;
+            background: white;
+            border-radius: 16px;
+            border: 2px dashed var(--border);
+        }
+        .order-summary {
+            background: var(--bg);
+            border-radius: 14px;
+            padding: 16px;
+            margin: 16px 0;
+            font-size: 13px;
+            text-align: left;
+            line-height: 1.8;
+        }
+        .order-summary strong {
+            color: var(--primary);
+        }
+        .close-modal {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 40px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: inherit;
+            width: 100%;
+            margin-top: 8px;
+        }
+        .close-modal:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .whatsapp-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+        .whatsapp-row button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: inherit;
+        }
+        .btn-wa {
+            background: #25D366;
+            color: white;
+            box-shadow: 0 2px 8px rgba(37,211,102,0.3);
+        }
+        .btn-wa:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(37,211,102,0.4);
+        }
+        .btn-wa:active {
+            transform: scale(0.96);
+        }
+        .btn-copy {
+            background: var(--bg);
+            color: var(--text);
+            border: 1.5px solid #e0e4e8 !important;
+        }
+        .btn-copy:hover {
+            background: #f0f2f5;
+        }
+
+        .price-input {
+            width: 100%;
+            padding: 16px;
+            font-size: 24px;
+            text-align: center;
+            border: 2px solid var(--primary);
+            border-radius: 14px;
+            margin: 20px 0;
+            font-weight: 700;
+            color: var(--text);
+            font-family: inherit;
+            transition: var(--transition);
+        }
+        .price-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(255,107,53,0.15);
+        }
+        .price-modal-buttons {
+            display: flex;
+            gap: 12px;
+        }
+        .price-modal-buttons button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 30px;
+            font-size: 15px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: var(--transition);
+            font-family: inherit;
+        }
+        .price-confirm {
+            background: var(--secondary);
+            color: white;
+            box-shadow: 0 2px 8px rgba(39,174,96,0.25);
+        }
+        .price-confirm:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(39,174,96,0.35);
+        }
+        .price-cancel {
+            background: var(--bg);
+            color: var(--text);
+            border: 1.5px solid #e0e4e8 !important;
+        }
+        .price-cancel:hover {
+            background: #f0f2f5;
+        }
+
+        .alert-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+        .alert-ok {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 40px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: inherit;
+            width: 100%;
+        }
+        .alert-ok:hover {
+            background: var(--primary-dark);
+        }
+
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 500;
+            flex-direction: column;
+            gap: 20px;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+        }
+        .loading-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid #f0f0f0;
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        .loading-text {
+            color: var(--text-light);
+            font-size: 15px;
+            font-weight: 600;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .loading-error {
+            color: var(--danger);
+            text-align: center;
+            padding: 24px;
+            font-weight: 600;
+        }
+        .retry-btn {
+            margin-top: 16px;
+            padding: 12px 28px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+            transition: var(--transition);
+        }
+        .retry-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255,107,53,0.3);
+        }
+
+        .toast {
+            position: fixed;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-20px);
+            background: var(--text);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 300;
+            opacity: 0;
+            transition: var(--transition);
+            pointer-events: none;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+            white-space: nowrap;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-light);
+        }
+        .no-results-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+
+        @media (min-width: 768px) {
+            body {
+                max-width: 600px;
+                margin: 0 auto;
+                padding-bottom: 160px;
+            }
+            .cart-floating {
+                max-width: 600px;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+            .cart-floating.minimized {
+                transform: translateX(-50%) translateY(calc(100% - 60px));
+            }
+        }
     </style>
+
+    <!-- QRCode.js -->
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs2@0.0.2/qrcode.min.js"></script>
+    <!-- Supabase JS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
+<!-- ===== LOADING ===== -->
 <div id="loadingOverlay" class="loading-overlay">
     <div class="spinner"></div>
     <div class="loading-text">Cargando menú...</div>
 </div>
 
 <div id="mainContent" style="display: none;">
+    <!-- ===== LANGUAGE BAR ===== -->
     <div class="lang-bar">
         <button class="lang-btn" data-lang="en" aria-label="English">🇺🇸 EN</button>
         <button class="lang-btn active" data-lang="es" aria-label="Español">🇪🇸 ES</button>
         <button class="lang-btn" data-lang="zh" aria-label="中文">🇨🇳 中文</button>
     </div>
 
+    <!-- ===== HEADER ===== -->
     <div class="header">
         <h1 id="shop-name">Soda Sonrisas</h1>
         <p id="shop-desc">📱 Escanea el código para pagar en caja</p>
@@ -248,10 +1135,6 @@
         <h3 id="modal-title">📱 Muestra este código</h3>
         <div id="qr-code" class="qr-container"></div>
         <div class="order-summary" id="qr-order-summary"></div>
-        <div class="whatsapp-row">
-            <button class="btn-wa" onclick="sendWhatsApp()">💬 Enviar por WhatsApp</button>
-            <button class="btn-copy" onclick="copyQRMessage()">📋 Copiar</button>
-        </div>
         <button class="close-modal" onclick="closeQRModal()" id="close-btn">Cerrar</button>
     </div>
 </div>
@@ -287,21 +1170,26 @@
     // ============================================================
     const SUPABASE_URL = 'https://lqgwqqbtzjxplcvdxuqs.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxxZ3dxcWJ0emp4cGxjdmR4dXFzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkyMTUxMzEsImV4cCI6MjA2NDc5MTEzMX0._-X9cnbRryMM-vxHpJvnyP_h_cnFY8bX1ACAYGdRrRQ';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     // ============================================================
     // CONFIGURACIÓN
     // ============================================================
     const CONFIG = {
-        BUCKET_MENU: 'menu',
-        FILE_MENU: 'menu.json',
-        BUCKET_ORDERS: 'orders_full',  // 直接读写 orders_full.json
-        FILE_ORDERS: 'orders_full.json',
+        BUCKET_SENT: 'orders_sent',
+        BUCKET_FULL: 'orders_full',
+        BUCKET_QR: 'orders_qr',   // 存放 QR 图片的 bucket
+        SENT_FILE: 'orders_sent.json',
+        FULL_FILE: 'orders_full.json',
         SIMPLE_CODES: new Set([1, 2, 3, 4, 6, 7, 46, 47]),
         MIN_EXTRA_PRICE: 1000,
         PHONE_LENGTH: 8,
-        WHATSAPP_NUMBER: '50670306012' // 哥斯达黎加号码，不带 '+' 号
+        WHATSAPP_NUMBER: '50670306012'
     };
 
+    // ============================================================
+    // ESTADO
+    // ============================================================
     const State = {
         products: [],
         extras: [],
@@ -315,7 +1203,7 @@
     };
 
     // ============================================================
-    // TRADUCCIONES (Mantengo las que ya tenías)
+    // TRADUCCIONES
     // ============================================================
     const I18N = {
         en: {
@@ -352,11 +1240,11 @@
             orderPhoneLabel:"📞 Phone to check orders",
             noOrders:"No orders found",
             emptyOrders:"Enter your phone to see your orders",
-            status_sent:"📨 Sent",
-            status_cooking:"🍳 Cooking",
-            status_paid:"💰 Paid",
-            status_completed:"✅ Completed",
-            status_cancelled:"❌ Cancelled"
+            status_sent:"Sent",
+            status_cooking:"Cooking",
+            status_paid:"Paid",
+            status_completed:"Completed",
+            status_cancelled:"Cancelled"
         },
         es: {
             shopName:"Soda Sonrisas",
@@ -392,11 +1280,11 @@
             orderPhoneLabel:"📞 Teléfono para consultar pedidos",
             noOrders:"No se encontraron pedidos",
             emptyOrders:"Ingresa tu teléfono para ver tus pedidos",
-            status_sent:"📨 Enviado",
-            status_cooking:"🍳 En cocina",
-            status_paid:"💰 Pagado",
-            status_completed:"✅ Completado",
-            status_cancelled:"❌ Cancelado"
+            status_sent:"Enviado",
+            status_cooking:"Cocinando",
+            status_paid:"Pagado",
+            status_completed:"Completado",
+            status_cancelled:"Cancelado"
         },
         zh: {
             shopName:"Soda Sonrisas",
@@ -432,11 +1320,11 @@
             orderPhoneLabel:"📞 查询订单电话",
             noOrders:"未找到订单",
             emptyOrders:"输入电话查看您的订单",
-            status_sent:"📨 已发送",
-            status_cooking:"🍳 制作中",
-            status_paid:"💰 已支付",
-            status_completed:"✅ 已完成",
-            status_cancelled:"❌ 已取消"
+            status_sent:"已发送",
+            status_cooking:"制作中",
+            status_paid:"已支付",
+            status_completed:"已完成",
+            status_cancelled:"已取消"
         }
     };
 
@@ -460,26 +1348,28 @@
     }
 
     // ============================================================
-    // SUPABASE STORAGE 读写 (直接操作 orders_full.json)
+    // LEER / ESCRIBIR JSON EN SUPABASE STORAGE
     // ============================================================
-    async function readOrdersFull() {
+    async function readJsonFile(bucket, fileName) {
         try {
-            const url = `${SUPABASE_URL}/storage/v1/object/public/${CONFIG.BUCKET_ORDERS}/${CONFIG.FILE_ORDERS}?t=${Date.now()}`;
+            const url = `${SUPABASE_URL}/storage/v1/object/public/${bucket}/${fileName}?t=${Date.now()}`;
             const response = await fetch(url, { cache: 'no-cache' });
             if (!response.ok) {
-                if (response.status === 404) return { orders: [] };
+                if (response.status === 404) {
+                    return { orders: [] };
+                }
                 throw new Error(`HTTP ${response.status}`);
             }
             return await response.json();
         } catch (error) {
-            console.error('Error reading orders_full.json:', error);
+            console.error(`Error reading ${bucket}/${fileName}:`, error);
             return { orders: [] };
         }
     }
 
-    async function writeOrdersFull(data) {
+    async function writeJsonFile(bucket, fileName, data) {
         try {
-            const url = `${SUPABASE_URL}/storage/v1/object/public/${CONFIG.BUCKET_ORDERS}/${CONFIG.FILE_ORDERS}`;
+            const url = `${SUPABASE_URL}/storage/v1/object/public/${bucket}/${fileName}`;
             const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
             const response = await fetch(url, {
                 method: 'POST',
@@ -493,13 +1383,330 @@
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             return true;
         } catch (error) {
-            console.error('Error writing orders_full.json:', error);
+            console.error(`Error writing ${bucket}/${fileName}:`, error);
             return false;
         }
     }
 
     // ============================================================
-    // RENDERIZADO (菜单和购物车 - 与之前相同，略作精简)
+    // GENERAR QR Y SUBIR IMAGEN A SUPABASE
+    // ============================================================
+    async function generateAndUploadQRImage(orderId, qrContent) {
+        try {
+            // 1. 用 canvas 生成 QR 码
+            const qrDiv = document.createElement('div');
+            const qr = new QRCode(qrDiv, {
+                text: qrContent,
+                width: 300,
+                height: 300,
+                correctLevel: QRCode.CorrectLevel.H
+            });
+
+            await new Promise(resolve => setTimeout(resolve, 300));
+
+            const canvas = qrDiv.querySelector('canvas');
+            if (!canvas) throw new Error('Canvas no generado');
+
+            // 2. 转成 PNG Blob
+            const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+
+            // 3. 上传 a Supabase Storage
+            const fileName = `qr_${orderId}.png`;
+            const filePath = `qr_images/${fileName}`;
+
+            const { data, error } = await supabase.storage
+                .from(CONFIG.BUCKET_QR)
+                .upload(filePath, blob, {
+                    contentType: 'image/png',
+                    upsert: true
+                });
+
+            if (error) throw error;
+
+            // 4. Obtener URL pública
+            const { data: urlData } = supabase.storage
+                .from(CONFIG.BUCKET_QR)
+                .getPublicUrl(filePath);
+
+            return urlData.publicUrl;
+
+        } catch (error) {
+            console.error('Error generando/subiendo QR:', error);
+            return null;
+        }
+    }
+
+    // ============================================================
+    // GENERAR QR CONTENT (TEXTO)
+    // ============================================================
+    function generateQRContent() {
+        const validItems = State.cart.filter(i => i.qty > 0);
+        if (!validItems.length) return '';
+        return validItems.map(item => {
+            const simple = isSimple(item.productId);
+            let attrCode;
+            if (simple) {
+                attrCode = 1;
+            } else {
+                attrCode = getAttrCode(item.importType, item.customType);
+            }
+            let str = `${item.productId}|${item.qty}|${attrCode}`;
+            if (item.extras?.length) str += '|' + item.extras.map(e => `${e.id}|${e.price}`).join('!');
+            return str;
+        }).join(';');
+    }
+
+    // ============================================================
+    // VALIDAR TELÉFONO
+    // ============================================================
+    function validatePhone() {
+        const phone = $('phoneInput').value.trim();
+        const error = $('phoneError');
+        if (phone && !/^\d{8}$/.test(phone)) {
+            error.classList.add('show');
+            return false;
+        }
+        error.classList.remove('show');
+        return true;
+    }
+
+    // ============================================================
+    // GENERAR ORDEN + QR + WHATSAPP AUTOMÁTICO
+    // ============================================================
+    window.generateOrderQR = async function() {
+        if (!validatePhone()) {
+            $('phoneInput').focus();
+            return;
+        }
+        const validItems = State.cart.filter(i => i.qty > 0);
+        if (!validItems.length) {
+            showToast(t('emptyCart'));
+            return;
+        }
+
+        // --- Calcular total y construir items ---
+        let total = 0;
+        let orderItems = [];
+        for (const item of validItems) {
+            const simple = isSimple(item.productId);
+            const price = getFinalPrice(item.basePrice, simple ? '' : item.customType);
+            const itemTotal = price * item.qty;
+            const extrasTotal = item.extras?.reduce((s, e) => s + e.price, 0) || 0;
+            total += itemTotal + extrasTotal;
+
+            let attrs = [];
+            if (!simple) {
+                if (item.importType === 'local') attrs.push('Con olor');
+                if (item.customType === 'type1') attrs.push('De la casa');
+            } else {
+                attrs.push('Con olor');
+            }
+            orderItems.push({
+                name: item.name,
+                qty: item.qty,
+                price: price,
+                attrs: attrs,
+                extras: item.extras || []
+            });
+        }
+
+        const phone = $('phoneInput').value.trim();
+        const notes = $('notesInput').value.trim();
+        const orderId = 'ORD-' + Date.now().toString().slice(-8);
+
+        // --- Generar contenido QR ---
+        let qrContent = generateQRContent();
+        if (phone) qrContent += `|${phone}`;
+        if (notes) qrContent += `|${notes.replace(/\|/g, ' ')}`;
+        State.currentQRData = qrContent;
+        State.currentOrderId = orderId;
+
+        showToast('⏳ Generando QR y guardando...');
+
+        // --- 1. Generar y subir imagen QR ---
+        const qrImageUrl = await generateAndUploadQRImage(orderId, qrContent);
+
+        if (!qrImageUrl) {
+            showToast('⚠️ No se pudo generar la imagen QR, pero el pedido sigue');
+        }
+
+        // --- 2. Guardar en orders_sent.json (cliente) ---
+        const sentData = await readJsonFile(CONFIG.BUCKET_SENT, CONFIG.SENT_FILE);
+        sentData.orders = sentData.orders || [];
+        if (!sentData.orders.some(o => o.orderId === orderId)) {
+            sentData.orders.push({
+                orderId: orderId,
+                phone: phone,
+                createdAt: new Date().toISOString(),
+                qrImageUrl: qrImageUrl
+            });
+            await writeJsonFile(CONFIG.BUCKET_SENT, CONFIG.SENT_FILE, sentData);
+        }
+
+        // --- 3. Guardar en orders_full.json (gestión) ---
+        const fullData = await readJsonFile(CONFIG.BUCKET_FULL, CONFIG.FULL_FILE);
+        fullData.orders = fullData.orders || [];
+        if (!fullData.orders.some(o => o.orderId === orderId)) {
+            const itemSummary = orderItems.map(i => `${i.name} x${i.qty}`).join(', ');
+            const waMessage = `🧾 *Nuevo pedido*\n\n📋 ${itemSummary}\n💰 Total: ₡${total.toLocaleString()}\n📞 Tel: ${phone}\n${notes ? `📝 Notas: ${notes}\n` : ''}\n📷 QR: ${qrImageUrl || 'No generado'}`;
+
+            fullData.orders.push({
+                orderId: orderId,
+                phone: phone,
+                items: orderItems,
+                total: total,
+                notes: notes,
+                qrContent: qrContent,
+                qrImageUrl: qrImageUrl,
+                whatsappMessage: waMessage,
+                status: 'sent',
+                statusHistory: [
+                    { status: 'sent', timestamp: new Date().toISOString() }
+                ],
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            });
+            await writeJsonFile(CONFIG.BUCKET_FULL, CONFIG.FULL_FILE, fullData);
+        }
+
+        // --- 4. Mostrar QR en modal ---
+        const qrDiv = $('qr-code');
+        qrDiv.innerHTML = '';
+        try {
+            new QRCode(qrDiv, {
+                text: qrContent,
+                width: 220,
+                height: 220,
+                correctLevel: QRCode.CorrectLevel.M
+            });
+        } catch(e) {
+            qrDiv.innerHTML = '<div style="color: var(--danger); font-weight: 600;">Error generando QR</div>';
+        }
+
+        const itemCount = validItems.reduce((s, i) => s + i.qty, 0);
+        $('qr-order-summary').innerHTML = `
+            <div><strong>Orden: ${orderId}</strong></div>
+            <div><strong>${itemCount} producto(s)</strong></div>
+            <div>Total: <strong>₡${total.toLocaleString()}</strong></div>
+            ${phone ? `<div>📞 Tel: ${escapeHtml(phone)}</div>` : ''}
+            ${notes ? `<div>📝 Notas: ${escapeHtml(notes.substring(0, 50))}${notes.length > 50 ? '...' : ''}</div>` : ''}
+            ${qrImageUrl ? `<div style="font-size:11px;color:var(--text-light);word-break:break-all;">📷 QR: <a href="${qrImageUrl}" target="_blank">Ver imagen</a></div>` : ''}
+            <div style="margin-top:8px;font-size:12px;color:var(--text-light);">📨 Estado: ${t('status_sent')}</div>
+        `;
+        $('modal-title').textContent = t('modalTitle');
+        $('close-btn').textContent = t('closeBtn');
+        $('qrModal').classList.add('show');
+
+        // --- 5. 🚀 AUTOMÁTICAMENTE ABRIR WHATSAPP ---
+        if (qrImageUrl) {
+            const itemSummary = orderItems.map(i => `${i.name} x${i.qty}`).join(', ');
+            const message = `🧾 *Nuevo pedido*\n\n📋 ${itemSummary}\n💰 Total: ₡${total.toLocaleString()}\n📞 Tel: ${phone}\n${notes ? `📝 Notas: ${notes}\n` : ''}\n📷 *QR para escanear:*\n${qrImageUrl}\n\n🔑 Código: ${qrContent}`;
+            const encoded = encodeURIComponent(message);
+            const waUrl = `https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${encoded}`;
+
+            // Abrir WhatsApp en nueva ventana/pestaña (automático)
+            setTimeout(() => {
+                window.open(waUrl, '_blank');
+            }, 500);
+
+            showToast('✅ Pedido enviado! Abriendo WhatsApp...');
+        } else {
+            showToast('✅ Pedido guardado, pero no se pudo generar imagen QR');
+        }
+
+        // --- Limpiar carrito ---
+        State.cart = [];
+        renderMenu();
+        renderCart();
+    };
+
+    // ============================================================
+    // CONSULTAR MIS PEDIDOS (cliente: lee sent + full)
+    // ============================================================
+    window.queryMyOrders = async function() {
+        const phone = $('orderPhoneInput').value.trim();
+        if (!phone || !/^\d{8}$/.test(phone)) {
+            showToast('Ingresa un teléfono válido de 8 dígitos');
+            return;
+        }
+
+        const container = $('ordersContainer');
+        container.innerHTML = `<div style="text-align:center;padding:20px;color:var(--text-light);">⏳ Buscando...</div>`;
+
+        try {
+            const [sentData, fullData] = await Promise.all([
+                readJsonFile(CONFIG.BUCKET_SENT, CONFIG.SENT_FILE),
+                readJsonFile(CONFIG.BUCKET_FULL, CONFIG.FULL_FILE)
+            ]);
+
+            const sentOrders = sentData.orders || [];
+            const fullOrders = fullData.orders || [];
+
+            const mySentOrders = sentOrders.filter(o => o.phone === phone);
+
+            if (mySentOrders.length === 0) {
+                container.innerHTML = `
+                    <div class="order-empty">
+                        <div class="order-empty-icon">📋</div>
+                        <div>${t('noOrders')}</div>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            for (const sent of mySentOrders) {
+                const fullOrder = fullOrders.find(o => o.orderId === sent.orderId);
+
+                const status = fullOrder?.status || 'sent';
+                const statusMap = {
+                    'sent': { label: t('status_sent'), cls: 'sent' },
+                    'cooking': { label: t('status_cooking'), cls: 'cooking' },
+                    'paid': { label: t('status_paid'), cls: 'paid' },
+                    'completed': { label: t('status_completed'), cls: 'completed' },
+                    'cancelled': { label: t('status_cancelled'), cls: 'cancelled' }
+                };
+                const statusInfo = statusMap[status] || statusMap['sent'];
+
+                let detailsHtml = '';
+                if (fullOrder) {
+                    const itemsText = fullOrder.items?.map(i => `${i.name} x${i.qty}`).join(', ') || '';
+                    detailsHtml = `
+                        <div class="order-items">${escapeHtml(itemsText)}</div>
+                        <div class="order-total">₡${(fullOrder.total || 0).toLocaleString()}</div>
+                        ${fullOrder.notes ? `<div class="order-phone">📝 ${escapeHtml(fullOrder.notes)}</div>` : ''}
+                        ${sent.qrImageUrl ? `<div class="order-phone">📷 <a href="${sent.qrImageUrl}" target="_blank">Ver QR</a></div>` : ''}
+                    `;
+                } else {
+                    detailsHtml = `
+                        <div class="order-items">⏳ Procesando tu pedido...</div>
+                    `;
+                }
+
+                const date = sent.createdAt ? new Date(sent.createdAt).toLocaleString() : '';
+
+                html += `
+                    <div class="order-card">
+                        <div class="order-header">
+                            <span class="order-id">🧾 ${escapeHtml(sent.orderId || 'N/A')}</span>
+                            <span class="order-status ${statusInfo.cls}">${statusInfo.label}</span>
+                        </div>
+                        ${detailsHtml}
+                        <div class="order-phone">📅 ${date}</div>
+                    </div>
+                `;
+            }
+            container.innerHTML = html;
+            showToast(`✅ ${mySentOrders.length} pedido(s) encontrado(s)`);
+
+        } catch(error) {
+            console.error('Error:', error);
+            container.innerHTML = `<div style="text-align:center;padding:20px;color:var(--danger);">❌ Error de conexión</div>`;
+        }
+    };
+
+    // ============================================================
+    // RENDER MENÚ Y CARRITO
     // ============================================================
     function renderMenu() {
         const container = $('menu-container');
@@ -557,7 +1764,7 @@
     }
 
     // ============================================================
-    // ACCIONES (updateQty, updateOption, addExtra, confirmPrice, removeExtra, toggleCart)
+    // ACCIONES DEL CARRITO
     // ============================================================
     window.updateQty = function(productId, delta) {
         const product = State.products.find(p => p.code === productId);
@@ -566,7 +1773,15 @@
         let item = State.cart.find(i => i.productId === productId);
         if (delta > 0) {
             if (!item) {
-                item = { productId: product.code, name: getName(product), basePrice: product.basePrice, qty: 0, importType: 'local', customType: '', extras: [] };
+                item = {
+                    productId: product.code,
+                    name: getName(product),
+                    basePrice: product.basePrice,
+                    qty: 0,
+                    importType: 'local',
+                    customType: '',
+                    extras: []
+                };
                 State.cart.push(item);
             }
             if (simple) item.importType = 'local';
@@ -650,297 +1865,18 @@
     };
 
     // ============================================================
-    // VALIDACIÓN DE TELÉFONO (FUNCIÓN MEJORADA)
+    // MODALES
     // ============================================================
-    function isValidPhone(phone) {
-        return phone && /^\d{8}$/.test(phone.trim());
-    }
-
-    function validatePhoneInput() {
-        const phone = $('phoneInput').value.trim();
-        const error = $('phoneError');
-        if (phone && !/^\d{8}$/.test(phone)) {
-            error.classList.add('show');
-            return false;
-        }
-        error.classList.remove('show');
-        return true;
-    }
-
-    // ============================================================
-    // GENERAR QR Y GUARDAR ORDEN (SOLO EN ORDERS_FULL.JSON)
-    // ============================================================
-    window.generateOrderQR = async function() {
-        // 1. 验证电话号码 (必填)
-        const phone = $('phoneInput').value.trim();
-        if (!isValidPhone(phone)) {
-            showToast('⚠️ ' + t('phoneError'));
-            $('phoneInput').focus();
-            $('phoneError').classList.add('show');
-            return;
-        } else {
-            $('phoneError').classList.remove('show');
-        }
-
-        // 2. 验证购物车
-        const validItems = State.cart.filter(i => i.qty > 0);
-        if (!validItems.length) {
-            showToast(t('emptyCart'));
-            return;
-        }
-
-        // 3. 计算总价和构建订单数据
-        let total = 0;
-        let orderItems = [];
-        for (const item of validItems) {
-            const simple = isSimple(item.productId);
-            const price = getFinalPrice(item.basePrice, simple ? '' : item.customType);
-            const itemTotal = price * item.qty;
-            const extrasTotal = item.extras?.reduce((s, e) => s + e.price, 0) || 0;
-            total += itemTotal + extrasTotal;
-
-            let attrs = [];
-            if (!simple) {
-                if (item.importType === 'local') attrs.push('Con olor');
-                if (item.customType === 'type1') attrs.push('De la casa');
-            } else {
-                attrs.push('Con olor');
-            }
-            orderItems.push({
-                name: item.name,
-                qty: item.qty,
-                price: price,
-                attrs: attrs,
-                extras: item.extras || []
-            });
-        }
-
-        const notes = $('notesInput').value.trim();
-        const orderId = 'ORD-' + Date.now().toString().slice(-8);
-
-        // 4. 构建 QR 内容
-        let qrContent = generateQRContent();
-        if (phone) qrContent += `|${phone}`;
-        if (notes) qrContent += `|${notes.replace(/\|/g, ' ')}`;
-        State.currentQRData = qrContent;
-        State.currentOrderId = orderId;
-
-        // 5. 构建 WhatsApp 消息
-        const itemSummary = orderItems.map(i => `${i.name} x${i.qty}`).join(', ');
-        const waMessage = `🧾 *Nuevo pedido*\n\n📋 ${itemSummary}\n💰 Total: ₡${total.toLocaleString()}\n📞 Tel: ${phone}\n${notes ? `📝 Notas: ${notes}\n` : ''}\n🔑 Código QR: ${qrContent}`;
-
-        // 6. 写入 orders_full.json
-        const fullData = await readOrdersFull();
-        fullData.orders = fullData.orders || [];
-
-        // 检查是否已存在相同订单（防止重复提交）
-        const exists = fullData.orders.some(o => o.orderId === orderId);
-        if (!exists) {
-            fullData.orders.push({
-                orderId: orderId,
-                phone: phone,
-                items: orderItems,
-                total: total,
-                notes: notes,
-                qrContent: qrContent,
-                whatsappMessage: waMessage,
-                status: 'sent',
-                statusHistory: [
-                    { status: 'sent', timestamp: new Date().toISOString() }
-                ],
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString()
-            });
-
-            const saved = await writeOrdersFull(fullData);
-            if (saved) {
-                showToast('✅ Pedido guardado en la nube');
-            } else {
-                showToast('⚠️ Error al guardar, pero el QR está disponible');
-            }
-        } else {
-            showToast('⚠️ Este pedido ya existe');
-        }
-
-        // 7. 显示 QR 模态框
-        showQRModal(orderId, orderItems, total, phone, notes, qrContent);
-
-        // 8. 清空购物车
-        State.cart = [];
-        renderMenu();
-        renderCart();
-
-        // 9. 记住电话号码
-        try {
-            localStorage.setItem('lastPhone', phone);
-        } catch(e) {}
+    window.closeQRModal = function() {
+        $('qrModal').classList.remove('show');
     };
 
-    function generateQRContent() {
-        const validItems = State.cart.filter(i => i.qty > 0);
-        if (!validItems.length) return '';
-        return validItems.map(item => {
-            const simple = isSimple(item.productId);
-            let attrCode = simple ? 1 : getAttrCode(item.importType, item.customType);
-            let str = `${item.productId}|${item.qty}|${attrCode}`;
-            if (item.extras?.length) str += '|' + item.extras.map(e => `${e.id}|${e.price}`).join('!');
-            return str;
-        }).join(';');
-    }
-
-    // ============================================================
-    // 显示 QR 模态框
-    // ============================================================
-    function showQRModal(orderId, items, total, phone, notes, qrContent) {
-        const qrDiv = $('qr-code');
-        qrDiv.innerHTML = '';
-        try {
-            new QRCode(qrDiv, { text: qrContent, width: 220, height: 220, correctLevel: QRCode.CorrectLevel.M });
-        } catch(e) {
-            qrDiv.innerHTML = '<div style="color: var(--danger); font-weight: 600;">Error generando QR</div>';
-        }
-
-        const itemCount = items.reduce((s, i) => s + i.qty, 0);
-        $('qr-order-summary').innerHTML = `
-            <div><strong>Orden: ${orderId}</strong></div>
-            <div><strong>${itemCount} producto(s)</strong></div>
-            <div>Total: <strong>₡${total.toLocaleString()}</strong></div>
-            ${phone ? `<div>📞 Tel: ${escapeHtml(phone)}</div>` : ''}
-            ${notes ? `<div>📝 Notas: ${escapeHtml(notes.substring(0, 50))}${notes.length > 50 ? '...' : ''}</div>` : ''}
-            <div style="margin-top:8px;font-size:12px;color:var(--text-light);">📨 Estado: Enviado</div>
-        `;
-        $('modal-title').textContent = t('modalTitle');
-        $('close-btn').textContent = t('closeBtn');
-        $('qrModal').classList.add('show');
-    }
-
-    // ============================================================
-    // WHATSAPP: USANDO EL FORMATO CORRECTO (https://wa.me/)
-    // ============================================================
-    window.sendWhatsApp = function() {
-        // 从页面获取订单信息，构建清晰的消息
-        const summaryEl = $('qr-order-summary');
-        if (!summaryEl) {
-            showToast('No hay información de pedido para enviar');
-            return;
-        }
-
-        // 提取文本内容，并清理多余的换行和空格
-        let summaryText = summaryEl.textContent?.trim() || '';
-        // 移除可能存在的 "Estado: Enviado" 等状态文本，让消息更干净
-        summaryText = summaryText.replace(/📨 Estado: Enviado/g, '').trim();
-
-        // 构建要发送的完整消息
-        const message = `🧾 *Nuevo pedido*\n\n${summaryText}\n\n📍 Soda Sonrisas`;
-
-        // 使用正确的 WhatsApp URL 格式: https://wa.me/号码?text=消息
-        const encodedMessage = encodeURIComponent(message);
-        const waUrl = `https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${encodedMessage}`;
-
-        // 尝试在新窗口/标签页中打开
-        window.open(waUrl, '_blank');
+    window.closeAlert = function() {
+        $('alertModal').classList.remove('show');
     };
 
     // ============================================================
-    // COPIAR QR
-    // ============================================================
-    window.copyQRMessage = function() {
-        if (!State.currentQRData) {
-            showToast('No hay QR para copiar');
-            return;
-        }
-        const summary = $('qr-order-summary')?.textContent?.trim() || '';
-        const message = `🧾 Nuevo pedido\n\n${summary}\n\nCódigo QR: ${State.currentQRData}`;
-        navigator.clipboard.writeText(message).then(() => {
-            showToast('📋 Copiado al portapapeles');
-        }).catch(() => {
-            showToast('No se pudo copiar');
-        });
-    };
-
-    // ============================================================
-    // MIS PEDIDOS (LEER ORDERS_FULL.JSON)
-    // ============================================================
-    window.queryMyOrders = async function() {
-        const phone = $('orderPhoneInput').value.trim();
-        if (!isValidPhone(phone)) {
-            showToast('⚠️ Ingresa un teléfono válido de 8 dígitos');
-            return;
-        }
-
-        const container = $('ordersContainer');
-        container.innerHTML = `<div style="text-align:center;padding:20px;color:var(--text-light);">⏳ Buscando...</div>`;
-
-        try {
-            const fullData = await readOrdersFull();
-            const orders = fullData.orders || [];
-
-            // 筛选该手机号的订单
-            const myOrders = orders.filter(o => o.phone === phone);
-
-            // 按时间倒序排列
-            myOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-            if (myOrders.length === 0) {
-                container.innerHTML = `
-                    <div class="order-empty">
-                        <div class="order-empty-icon">📋</div>
-                        <div>${t('noOrders')}</div>
-                    </div>
-                `;
-                return;
-            }
-
-            const statusMap = {
-                'sent': t('status_sent'),
-                'cooking': t('status_cooking'),
-                'paid': t('status_paid'),
-                'completed': t('status_completed'),
-                'cancelled': t('status_cancelled')
-            };
-
-            let html = '';
-            for (const order of myOrders) {
-                const statusText = statusMap[order.status] || order.status || '📨 Enviado';
-                const statusClass = order.status || 'sent';
-
-                let itemsText = '';
-                if (order.items && order.items.length) {
-                    itemsText = order.items.map(i => `${i.name} x${i.qty}`).join(', ');
-                }
-
-                const date = order.createdAt ? new Date(order.createdAt).toLocaleString() : '';
-
-                html += `
-                    <div class="order-card">
-                        <div class="order-header">
-                            <span class="order-id">🧾 ${escapeHtml(order.orderId || 'N/A')}</span>
-                            <span class="order-status ${statusClass}">${statusText}</span>
-                        </div>
-                        <div class="order-items">${escapeHtml(itemsText || '📨 Pedido enviado')}</div>
-                        <div class="order-total">₡${(order.total || 0).toLocaleString()}</div>
-                        ${order.notes ? `<div class="order-phone">📝 ${escapeHtml(order.notes)}</div>` : ''}
-                        <div class="order-phone">📅 ${date}</div>
-                    </div>
-                `;
-            }
-            container.innerHTML = html;
-            showToast(`✅ ${myOrders.length} pedido(s) encontrado(s)`);
-
-        } catch (error) {
-            console.error('Error:', error);
-            container.innerHTML = `<div style="text-align:center;padding:20px;color:var(--danger);">❌ Error de conexión</div>`;
-        }
-    };
-
-    // ============================================================
-    // CERRAR MODALES
-    // ============================================================
-    window.closeQRModal = function() { $('qrModal').classList.remove('show'); };
-    window.closeAlert = function() { $('alertModal').classList.remove('show'); };
-
-    // ============================================================
-    // CAMBIO DE IDIOMA
+    // IDIOMA
     // ============================================================
     function setLanguage(lang) {
         State.lang = lang;
@@ -955,7 +1891,6 @@
         $('searchInput').placeholder = t('searchPlaceholder');
         $('alertTitle').textContent = I18N[lang].alertTitle;
         $('alertMessage').textContent = I18N[lang].alertMessage;
-
         document.querySelectorAll('.tab-btn').forEach(b => {
             if (b.dataset.tab === 'order') b.textContent = t('tabOrder');
             if (b.dataset.tab === 'orders') b.textContent = t('tabOrders');
@@ -997,10 +1932,34 @@
     };
 
     // ============================================================
-    // CARGAR MENÚ
+    // TABS
+    // ============================================================
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            const tab = this.dataset.tab;
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            if (tab === 'order') {
+                $('tabContentOrder').classList.add('active');
+            } else if (tab === 'orders') {
+                $('tabContentOrders').classList.add('active');
+                const phone = $('phoneInput').value.trim();
+                if (phone) $('orderPhoneInput').value = phone;
+            }
+        });
+    });
+
+    // Enter key en búsqueda de pedidos
+    $('orderPhoneInput').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') window.queryMyOrders();
+    });
+
+    // ============================================================
+    // CARGA DE MENÚ
     // ============================================================
     function getMenuUrl() {
-        return `${SUPABASE_URL}/storage/v1/object/public/${CONFIG.BUCKET_MENU}/${CONFIG.FILE_MENU}?t=${Date.now()}`;
+        return `${SUPABASE_URL}/storage/v1/object/public/menu/menu.json?t=${Date.now()}`;
     }
 
     async function loadMenuData() {
@@ -1015,16 +1974,6 @@
             $('mainContent').style.display = 'block';
             renderMenu();
             renderCart();
-
-            // 恢复上次保存的电话号码
-            try {
-                const lastPhone = localStorage.getItem('lastPhone');
-                if (lastPhone) {
-                    $('phoneInput').value = lastPhone;
-                    $('orderPhoneInput').value = lastPhone;
-                }
-            } catch(e) {}
-
             if (!sessionStorage.getItem('alertShown')) {
                 $('alertModal').classList.add('show');
                 sessionStorage.setItem('alertShown', 'true');
@@ -1035,56 +1984,17 @@
     }
 
     // ============================================================
-    // INICIALIZACIÓN
+    // INICIO
     // ============================================================
     document.addEventListener('DOMContentLoaded', () => {
-        // 语言切换
         document.querySelectorAll('.lang-btn').forEach(btn => btn.addEventListener('click', () => {
             const lang = btn.dataset.lang;
             setLanguage(lang);
             document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
         }));
-
-        // Tab 切换
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-
-                const tab = this.dataset.tab;
-                document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-
-                if (tab === 'order') {
-                    $('tabContentOrder').classList.add('active');
-                } else if (tab === 'orders') {
-                    $('tabContentOrders').classList.add('active');
-                    const phone = $('phoneInput').value.trim();
-                    if (phone) $('orderPhoneInput').value = phone;
-                }
-            });
-        });
-
-        // 搜索
         $('searchInput').addEventListener('input', handleSearch);
-
-        // 电话输入验证
-        $('phoneInput').addEventListener('input', validatePhoneInput);
-
-        // 电话输入自动同步到查询页和 localStorage
-        $('phoneInput').addEventListener('input', function() {
-            const phone = this.value.trim();
-            if (isValidPhone(phone)) {
-                try { localStorage.setItem('lastPhone', phone); } catch(e) {}
-            }
-        });
-
-        // 查询页按 Enter 触发查询
-        $('orderPhoneInput').addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') window.queryMyOrders();
-        });
-
-        // ESC 关闭模态框
+        $('phoneInput').addEventListener('input', validatePhone);
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 $('qrModal').classList.remove('show');
@@ -1093,12 +2003,9 @@
             }
             if (e.key === 'Enter' && $('priceModal').classList.contains('show')) confirmPrice();
         });
-
-        // 点击外部关闭模态框
         document.querySelectorAll('.modal-overlay').forEach(modal => modal.addEventListener('click', (e) => {
             if (e.target === modal && modal.id !== 'alertModal') modal.classList.remove('show');
         }));
-
         loadMenuData();
     });
 </script>
